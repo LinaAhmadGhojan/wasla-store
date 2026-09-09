@@ -84,12 +84,30 @@
       </div>
 
       <div class="catalog-layout">
-        <!-- Filters -->
-        <aside class="filters" :class="{ open: filtersOpen }">
+        <!-- Filters: sidebar on desktop, bottom sheet popup on mobile -->
+        <div
+          v-if="filtersOpen"
+          class="filters-backdrop"
+          @click="closeFilters"
+        />
+        <aside
+          class="filters"
+          :class="{ open: filtersOpen }"
+          role="dialog"
+          :aria-modal="filtersOpen ? 'true' : 'false'"
+          aria-labelledby="filters-title"
+        >
           <div class="filters-head">
-            <h2>الفلترة</h2>
-            <button type="button" class="linkish" @click="resetFilters">مسح</button>
+            <div class="filters-head-text">
+              <h2 id="filters-title">الفلاتر</h2>
+              <p v-if="activeFilterCount" class="filters-count">{{ activeFilterCount }} مفعّل</p>
+            </div>
+            <div class="filters-head-actions">
+              <button type="button" class="btn-clear" @click="resetFilters">مسح الكل</button>
+              <button type="button" class="btn-close-filters" aria-label="إغلاق الفلاتر" @click="closeFilters">×</button>
+            </div>
           </div>
+          <div class="filters-body">
 
           <div class="filter-group" v-if="facets.categories?.length">
             <h3>التصنيف</h3>
@@ -249,11 +267,20 @@
           <p v-if="facets.profile && facets.profile !== 'default'" class="profile-hint">
             فلاتر مخصّصة لتصنيف: {{ facets.profile }}
           </p>
+          </div>
+          <div class="filters-footer">
+            <button type="button" class="btn-apply" @click="closeFilters">
+              عرض النتائج ({{ meta.total ?? 0 }})
+            </button>
+          </div>
         </aside>
 
         <main class="results">
           <div class="results-toolbar">
-            <button type="button" class="mobile-filters" @click="filtersOpen = !filtersOpen">فلاتر</button>
+            <button type="button" class="mobile-filters" @click="openFilters">
+              فلاتر
+              <span v-if="activeFilterCount" class="filter-badge">{{ activeFilterCount }}</span>
+            </button>
             <p class="meta">{{ meta.total ?? 0 }} منتج</p>
             <select v-model="filters.sort" @change="reload">
               <option v-for="(label, key) in (facets.sorts || defaultSorts)" :key="key" :value="key">{{ label }}</option>
@@ -381,6 +408,42 @@ const filters = reactive({
 });
 
 const specFilterKeys = ['material', 'type', 'occasion', 'age', 'fit', 'pattern', 'length', 'heel_height', 'style'];
+
+const activeFilterCount = computed(() => {
+  let n = 0;
+  if (filters.category_id) n += 1;
+  if (filters.subcategory_id) n += 1;
+  if (filters.brand_id) n += 1;
+  if (filters.store_id) n += 1;
+  if (filters.collection_id) n += 1;
+  if (filters.min_price != null && filters.min_price !== '') n += 1;
+  if (filters.max_price != null && filters.max_price !== '') n += 1;
+  if (filters.color) n += 1;
+  if (filters.size) n += 1;
+  if (filters.rating) n += 1;
+  if (filters.gender) n += 1;
+  if (filters.discount) n += 1;
+  if (filters.in_stock) n += 1;
+  if (filters.fast_delivery) n += 1;
+  specFilterKeys.forEach((k) => { if (filters[k]) n += 1; });
+  return n;
+});
+
+function openFilters() {
+  filtersOpen.value = true;
+}
+
+function closeFilters() {
+  filtersOpen.value = false;
+}
+
+function onFiltersKeydown(e) {
+  if (e.key === 'Escape') closeFilters();
+}
+
+watch(filtersOpen, (open) => {
+  document.body.style.overflow = open ? 'hidden' : '';
+});
 
 function showFilter(key) {
   const available = facets.value.available_filters;
@@ -583,6 +646,7 @@ function onDocClick(e) {
 onMounted(async () => {
   window.addEventListener('wasla:compare-changed', onCompareChanged);
   document.addEventListener('click', onDocClick);
+  document.addEventListener('keydown', onFiltersKeydown);
   try {
     const { data } = await api.get('/v1/catalog/trending-searches');
     trending.value = data.data || [];
@@ -593,6 +657,8 @@ onMounted(async () => {
 onBeforeUnmount(() => {
   window.removeEventListener('wasla:compare-changed', onCompareChanged);
   document.removeEventListener('click', onDocClick);
+  document.removeEventListener('keydown', onFiltersKeydown);
+  document.body.style.overflow = '';
 });
 </script>
 
@@ -637,40 +703,142 @@ onBeforeUnmount(() => {
   padding: .4rem .85rem; font-weight: 800; cursor: pointer; color: #0b3d44;
 }
 .chip.active { background: #1c7282; color: #fff; border-color: #1c7282; }
-.catalog-layout { display: grid; grid-template-columns: 260px 1fr; gap: 1.25rem; align-items: start; }
+.catalog-layout { display: grid; grid-template-columns: 280px 1fr; gap: 1.25rem; align-items: start; }
+.filters-backdrop { display: none; }
 .filters {
-  background: #fff; border-radius: 1.1rem; border: 1px solid rgba(28,114,130,.12);
-  padding: 1rem; position: sticky; top: 5rem; max-height: calc(100vh - 6rem); overflow: auto;
+  background: #fff;
+  border-radius: 1.15rem;
+  border: 1.5px solid rgba(28,114,130,.18);
+  box-shadow: 0 10px 28px rgba(19,47,55,.06);
+  padding: 0;
+  position: sticky;
+  top: 5rem;
+  max-height: calc(100vh - 6rem);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
 }
-.filters-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: .5rem; }
-.filters h2 { margin: 0; font-size: 1.05rem; }
-.filter-group { margin: .85rem 0; }
-.filter-group h3 { margin: 0 0 .4rem; font-size: .88rem; color: #1c7282; }
+.filters-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: .75rem;
+  padding: 1rem 1rem .75rem;
+  border-bottom: 1px solid rgba(28,114,130,.12);
+  background: #f3fafb;
+}
+.filters-head-text { display: flex; flex-direction: column; gap: .15rem; }
+.filters h2 { margin: 0; font-size: 1.1rem; color: #0b3d44; }
+.filters-count { margin: 0; font-size: .8rem; font-weight: 800; color: #1c7282; }
+.filters-head-actions { display: flex; align-items: center; gap: .35rem; }
+.btn-clear {
+  border: 1.5px solid rgba(28,114,130,.25);
+  background: #fff;
+  color: #1c7282;
+  border-radius: 999px;
+  padding: .35rem .75rem;
+  font-weight: 800;
+  cursor: pointer;
+  font-size: .82rem;
+}
+.btn-close-filters {
+  display: none;
+  width: 2.2rem;
+  height: 2.2rem;
+  border: 0;
+  border-radius: 999px;
+  background: #132f37;
+  color: #fff;
+  font-size: 1.4rem;
+  line-height: 1;
+  cursor: pointer;
+  font-weight: 700;
+}
+.filters-body { padding: .85rem 1rem 1rem; overflow: auto; flex: 1; min-height: 0; }
+.filters-footer { display: none; }
+.filter-group {
+  margin: 0 0 .85rem;
+  padding: .75rem;
+  border-radius: .85rem;
+  background: #f8fcfd;
+  border: 1px solid rgba(28,114,130,.1);
+}
+.filter-group h3 {
+  margin: 0 0 .55rem;
+  font-size: .9rem;
+  color: #0b3d44;
+  font-weight: 900;
+}
 .opt {
-  display: flex; justify-content: space-between; width: 100%; text-align: right;
-  border: 0; background: transparent; padding: .35rem .2rem; cursor: pointer; border-radius: .4rem;
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  text-align: right;
+  border: 1.5px solid transparent;
+  background: #fff;
+  padding: .5rem .65rem;
+  cursor: pointer;
+  border-radius: .6rem;
+  margin-bottom: .3rem;
+  color: #132f37;
+  font-weight: 700;
 }
-.opt:hover, .opt.on { background: #f5fbfc; color: #1c7282; font-weight: 800; }
-.opt.sub { padding-inline-start: 1rem; font-size: .9rem; color: #4d6b72; }
+.opt:hover { border-color: rgba(28,114,130,.25); }
+.opt.on {
+  background: #e7f6f8;
+  color: #0b3d44;
+  border-color: #1c7282;
+  font-weight: 900;
+}
+.opt.sub { padding-inline-start: 1.1rem; font-size: .9rem; color: #4d6b72; }
 .price-row { display: grid; grid-template-columns: 1fr 1fr; gap: .4rem; }
 .price-row input {
-  width: 100%; box-sizing: border-box; border: 1.5px solid rgba(28,114,130,.2);
-  border-radius: .6rem; padding: .45rem;
+  width: 100%; box-sizing: border-box; border: 1.5px solid rgba(28,114,130,.28);
+  border-radius: .65rem; padding: .55rem .6rem; background: #fff; font-weight: 700;
 }
-.size-grid { display: flex; flex-wrap: wrap; gap: .35rem; }
+.size-grid { display: flex; flex-wrap: wrap; gap: .4rem; }
 .size {
-  border: 1.5px solid rgba(28,114,130,.22); background: #fff; border-radius: .5rem;
-  padding: .3rem .55rem; cursor: pointer; font-weight: 700;
+  border: 1.5px solid rgba(28,114,130,.28); background: #fff; border-radius: .55rem;
+  padding: .4rem .65rem; cursor: pointer; font-weight: 800;
 }
 .size.on { background: #1c7282; color: #fff; border-color: #1c7282; }
-.check { display: flex; gap: .45rem; align-items: center; font-weight: 700; cursor: pointer; }
-.profile-hint { font-size: .8rem; color: #4d6b72; margin-top: .75rem; }
+.check {
+  display: flex; gap: .55rem; align-items: center; font-weight: 800; cursor: pointer;
+  padding: .35rem .15rem;
+}
+.check input { width: 1.05rem; height: 1.05rem; accent-color: #1c7282; }
+.profile-hint { font-size: .8rem; color: #4d6b72; margin: .35rem 0 0; font-weight: 700; }
 .results-toolbar { display: flex; gap: .75rem; align-items: center; margin-bottom: .85rem; flex-wrap: wrap; }
 .meta { margin: 0; color: #4d6b72; font-weight: 700; flex: 1; }
 .results-toolbar select {
   border: 1.5px solid rgba(28,114,130,.22); border-radius: 999px; padding: .45rem .8rem; background: #fff;
 }
-.mobile-filters { display: none; border: 0; background: #132f37; color: #fff; border-radius: 999px; padding: .45rem .9rem; font-weight: 800; }
+.mobile-filters {
+  display: none;
+  position: relative;
+  border: 0;
+  background: #1c7282;
+  color: #fff;
+  border-radius: 999px;
+  padding: .55rem 1rem;
+  font-weight: 900;
+  cursor: pointer;
+  align-items: center;
+  gap: .4rem;
+}
+.filter-badge {
+  background: #fff;
+  color: #1c7282;
+  border-radius: 999px;
+  min-width: 1.25rem;
+  height: 1.25rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: .75rem;
+  font-weight: 900;
+  padding: 0 .3rem;
+}
 .product-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 1rem; }
 .product-cell { position: relative; }
 .match {
@@ -726,13 +894,49 @@ onBeforeUnmount(() => {
   }
   .chip { flex: 0 0 auto; white-space: nowrap; }
   .catalog-layout { grid-template-columns: 1fr; }
+  .filters-backdrop {
+    display: block;
+    position: fixed;
+    inset: 0;
+    background: rgba(11, 40, 46, 0.48);
+    z-index: 70;
+  }
   .filters {
     display: none;
-    position: static;
-    max-height: none;
-    margin-bottom: 0.75rem;
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    top: auto;
+    width: 100%;
+    max-width: none;
+    max-height: min(88vh, 720px);
+    margin: 0;
+    border-radius: 1.35rem 1.35rem 0 0;
+    border: 0;
+    box-shadow: 0 -16px 40px rgba(0, 0, 0, 0.22);
+    z-index: 80;
+    padding: 0;
   }
-  .filters.open { display: block; }
+  .filters.open { display: flex; }
+  .btn-close-filters { display: inline-flex; align-items: center; justify-content: center; }
+  .filters-footer {
+    display: block;
+    padding: .75rem 1rem calc(.9rem + env(safe-area-inset-bottom, 0px));
+    border-top: 1px solid rgba(28,114,130,.14);
+    background: #fff;
+  }
+  .btn-apply {
+    width: 100%;
+    border: 0;
+    background: #1c7282;
+    color: #fff;
+    border-radius: 999px;
+    padding: .85rem 1rem;
+    font-weight: 900;
+    font-size: 1rem;
+    cursor: pointer;
+  }
   .mobile-filters { display: inline-flex; }
   .product-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.75rem; }
   .compare-bar {
