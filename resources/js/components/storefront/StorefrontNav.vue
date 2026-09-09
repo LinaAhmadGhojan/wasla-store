@@ -33,6 +33,13 @@
       </div>
 
       <form class="nav-search" action="/shop" method="get">
+        <a
+          v-if="initialQuery"
+          href="/shop"
+          class="nav-clear-search"
+          title="مسح البحث والرجوع"
+          aria-label="مسح البحث والرجوع"
+        >←</a>
         <button type="submit" aria-label="بحث">بحث</button>
         <input
           type="search"
@@ -181,6 +188,22 @@ async function onLogout() {
   font-size: 1rem;
   color: #ffffff;
   flex-shrink: 0;
+}
+.nav-clear-search {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  margin-inline-start: 0.35rem;
+  border-radius: 999px;
+  background: #ffffff;
+  color: #1c7282;
+  text-decoration: none;
+  font-weight: 900;
+  font-size: 1rem;
+  line-height: 1;
 }
 .nav-links {
   display: flex;

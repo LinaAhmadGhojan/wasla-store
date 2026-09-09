@@ -11,6 +11,17 @@
       <!-- Advanced search -->
       <div class="search-panel" @keydown.escape="closeSuggest">
         <form class="search-main" @submit.prevent="runSearch">
+          <button
+            v-if="hasActiveSearch"
+            type="button"
+            class="clear-search"
+            title="مسح البحث والرجوع لكل المنتجات"
+            aria-label="مسح البحث والرجوع لكل المنتجات"
+            @click="clearSearch"
+          >
+            <span class="clear-arrow" aria-hidden="true">←</span>
+            <span class="clear-text">رجوع</span>
+          </button>
           <input
             ref="searchInputEl"
             v-model="searchInput"
@@ -19,7 +30,16 @@
             autocomplete="off"
             @input="onSearchInput"
             @focus="showSuggest = true"
+            @search="onNativeSearchClear"
           />
+          <button
+            v-if="searchInput || filters.q"
+            type="button"
+            class="clear-x"
+            title="حذف نص البحث"
+            aria-label="حذف نص البحث"
+            @click="clearSearch"
+          >×</button>
           <button type="button" class="icon-btn" title="بحث صوتي" @click="startVoice" :disabled="voiceBusy">
             {{ voiceBusy ? '…' : 'Voice' }}
           </button>
@@ -409,6 +429,12 @@ const filters = reactive({
 
 const specFilterKeys = ['material', 'type', 'occasion', 'age', 'fit', 'pattern', 'length', 'heel_height', 'style'];
 
+const hasActiveSearch = computed(() => Boolean(
+  filters.q
+  || searchInput.value.trim()
+  || imageSearchActive.value
+));
+
 const activeFilterCount = computed(() => {
   let n = 0;
   if (filters.category_id) n += 1;
@@ -538,14 +564,43 @@ function goPage(n) {
 }
 
 let suggestTimer = null;
+let clearSearchTimer = null;
+
+function clearSearch() {
+  clearTimeout(suggestTimer);
+  clearTimeout(clearSearchTimer);
+  searchInput.value = '';
+  filters.q = '';
+  showSuggest.value = false;
+  suggestions.value = { suggestions: [], products: [] };
+  page.value = 1;
+  imageSearchActive.value = false;
+  imageSearchError.value = '';
+  reload();
+}
+
+function onNativeSearchClear(e) {
+  // Native type=search clear (×) fires search event with empty value
+  if (!String(e?.target?.value || '').trim()) {
+    clearSearch();
+  }
+}
+
 function onSearchInput() {
   clearTimeout(suggestTimer);
-  suggestTimer = setTimeout(async () => {
-    const q = searchInput.value.trim();
-    if (q.length < 1) {
-      suggestions.value = { suggestions: [], products: [] };
-      return;
+  clearTimeout(clearSearchTimer);
+  const q = searchInput.value.trim();
+
+  // Clearing the field restores the previous catalog results
+  if (!q) {
+    suggestions.value = { suggestions: [], products: [] };
+    if (filters.q || imageSearchActive.value) {
+      clearSearchTimer = setTimeout(() => clearSearch(), 80);
     }
+    return;
+  }
+
+  suggestTimer = setTimeout(async () => {
     const { data } = await api.get('/v1/catalog/suggestions', { params: { q } });
     suggestions.value = data;
     showSuggest.value = true;
@@ -554,6 +609,10 @@ function onSearchInput() {
 
 function runSearch() {
   filters.q = searchInput.value.trim();
+  if (!filters.q) {
+    clearSearch();
+    return;
+  }
   recentSearches.value = pushRecentSearch(filters.q);
   showSuggest.value = false;
   page.value = 1;
@@ -672,10 +731,46 @@ onBeforeUnmount(() => {
   display: flex; gap: .4rem; background: #fff; border-radius: 999px;
   border: 1.5px solid rgba(28,114,130,.2); padding: .35rem;
   box-shadow: 0 10px 28px rgba(19,47,55,.05);
+  align-items: center;
 }
 .search-main input {
-  flex: 1; border: 0; outline: none; padding: .7rem 1rem; background: transparent; font: inherit;
+  flex: 1; border: 0; outline: none; padding: .7rem 1rem; background: transparent; font: inherit; min-width: 0;
 }
+.clear-search {
+  display: inline-flex;
+  align-items: center;
+  gap: .25rem;
+  flex-shrink: 0;
+  border: 0;
+  border-radius: 999px;
+  background: #eef7f8;
+  color: #0b3d44;
+  font-weight: 900;
+  padding: .5rem .75rem;
+  cursor: pointer;
+  font-size: .85rem;
+}
+.clear-search:hover { background: #d8eef1; }
+.clear-arrow {
+  display: inline-flex;
+  font-size: 1.05rem;
+  line-height: 1;
+  font-weight: 900;
+}
+.clear-x {
+  flex-shrink: 0;
+  width: 2rem;
+  height: 2rem;
+  border: 0;
+  border-radius: 999px;
+  background: #f0f4f5;
+  color: #132f37;
+  font-size: 1.25rem;
+  font-weight: 800;
+  line-height: 1;
+  cursor: pointer;
+}
+.clear-x:hover { background: #e4ecee; }
 .icon-btn, .go {
   border: 0; border-radius: 999px; padding: .55rem .9rem; font-weight: 800; cursor: pointer;
 }
@@ -876,12 +971,21 @@ onBeforeUnmount(() => {
     padding: 0.45rem;
   }
   .search-main input {
-    flex: 1 1 100%;
+    flex: 1 1 calc(100% - 3rem);
     padding: 0.65rem 0.75rem;
+    order: 2;
   }
+  .clear-search {
+    order: 1;
+    flex: 1 1 auto;
+    justify-content: center;
+    min-height: 2.6rem;
+  }
+  .clear-x { order: 2; }
   .icon-btn, .go {
     flex: 1 1 auto;
     min-height: 2.6rem;
+    order: 3;
   }
   .section-chips {
     flex-wrap: nowrap;
