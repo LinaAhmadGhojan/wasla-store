@@ -33,18 +33,29 @@
             </button>
           </aside>
 
-          <div class="hero-shot" @mousemove="onZoomMove" @mouseleave="zoomOff = true" @mouseenter="zoomOff = false">
+          <div
+            class="hero-shot"
+            @touchstart.passive="onGalleryTouchStart"
+            @touchend.passive="onGalleryTouchEnd"
+          >
             <img
               v-if="activeImage && !imageBroken"
               :src="activeImage"
               :alt="product.name"
               class="hero-img"
-              :class="{ zooming: !zoomOff }"
-              :style="zoomStyle"
+              draggable="false"
               @error="imageBroken = true"
             />
             <span v-else>{{ imagePlaceholder }}</span>
-            <p class="zoom-hint">مرري للتكبير · 360° قريباً</p>
+            <div v-if="galleryImages.length > 1" class="gallery-dots" aria-hidden="true">
+              <span
+                v-for="(img, i) in galleryImages"
+                :key="'dot-'+i"
+                class="dot"
+                :class="{ on: i === galleryIndex }"
+              />
+            </div>
+            <p v-if="galleryImages.length > 1" class="swipe-hint">اسحبي يمين/يسار لتغيير الصورة</p>
           </div>
           <div v-if="product.video_url" class="video-box">
             <video :src="product.video_url" controls playsinline poster=""></video>
@@ -355,8 +366,7 @@ const justAdded = ref(false);
 const feedback = ref('');
 const feedbackIsError = ref(false);
 const imageBroken = ref(false);
-const zoomOff = ref(true);
-const zoomPos = ref({ x: 50, y: 50 });
+const galleryTouchX = ref(null);
 const wished = ref(false);
 const followingStore = ref(false);
 const questions = ref([]);
@@ -472,14 +482,6 @@ const imagePlaceholder = computed(() => {
   return placeholders[(product.value.id || 0) % placeholders.length];
 });
 
-const zoomStyle = computed(() => {
-  if (zoomOff.value) return {};
-  return {
-    transformOrigin: `${zoomPos.value.x}% ${zoomPos.value.y}%`,
-    transform: 'scale(1.85)',
-  };
-});
-
 const stockQty = computed(() => {
   if (selectedVariant.value) return Number(selectedVariant.value.stock_qty || 0);
   const variants = product.value?.variants || [];
@@ -493,13 +495,26 @@ const selectedWeight = computed(() => {
   return `${w} كغ`;
 });
 
-function onZoomMove(e) {
-  const el = e.currentTarget;
-  const rect = el.getBoundingClientRect();
-  zoomPos.value = {
-    x: ((e.clientX - rect.left) / rect.width) * 100,
-    y: ((e.clientY - rect.top) / rect.height) * 100,
-  };
+function onGalleryTouchStart(e) {
+  galleryTouchX.value = e.changedTouches?.[0]?.clientX ?? null;
+}
+
+function onGalleryTouchEnd(e) {
+  if (galleryTouchX.value == null) return;
+  const endX = e.changedTouches?.[0]?.clientX;
+  if (endX == null) return;
+  const dx = endX - galleryTouchX.value;
+  galleryTouchX.value = null;
+  if (Math.abs(dx) < 45) return;
+  const total = galleryImages.value.length;
+  if (total <= 1) return;
+  // swipe left => next, swipe right => previous
+  if (dx < 0) {
+    galleryIndex.value = Math.min(total - 1, galleryIndex.value + 1);
+  } else {
+    galleryIndex.value = Math.max(0, galleryIndex.value - 1);
+  }
+  imageBroken.value = false;
 }
 
 async function toggleWish() {
@@ -962,12 +977,16 @@ onMounted(() => {
   overflow: hidden;
   position: relative;
   border-radius: 1rem;
+  touch-action: pan-y;
+  user-select: none;
+  -webkit-user-select: none;
 }
 .hero-shot img {
   display: block;
   width: 100%;
   height: auto;
   object-fit: contain;
+  pointer-events: none;
 }
 .thumb {
   width: 64px;
@@ -1496,11 +1515,15 @@ onMounted(() => {
     order: 1;
     height: auto;
     max-height: none;
-    overflow: visible;
+    overflow: hidden;
+    min-height: 280px;
+    touch-action: pan-y;
   }
   .hero-shot img {
     width: 100%;
     height: auto;
+    max-height: 70vh;
+    margin: 0 auto;
   }
   .thumbs-rail {
     order: 2;
@@ -1510,7 +1533,16 @@ onMounted(() => {
     max-height: none;
     overflow-x: auto;
     overflow-y: hidden;
+    gap: 8px;
+    padding: 2px 2px 6px;
+    -webkit-overflow-scrolling: touch;
+    scroll-snap-type: x mandatory;
+    touch-action: pan-x;
   }
+  .thumb {
+    scroll-snap-align: start;
+  }
+  .swipe-hint { display: block; }
   .buy-column {
     order: 3;
     width: 100%;
@@ -1530,8 +1562,46 @@ onMounted(() => {
   .product-grid { grid-template-columns: 1fr; }
   .buy-column { min-width: 0 !important; }
 }
-.hero-img { transition: transform .12s ease-out; will-change: transform; cursor: zoom-in; }
-.zoom-hint { position: absolute; bottom: .5rem; inset-inline: .5rem; margin: 0; font-size: .75rem; color: #fff; background: rgba(19,47,55,.55); border-radius: .5rem; padding: .25rem .5rem; text-align: center; }
+.hero-img {
+  display: block;
+}
+.gallery-dots {
+  position: absolute;
+  bottom: 0.65rem;
+  inset-inline: 0;
+  display: flex;
+  justify-content: center;
+  gap: 0.35rem;
+  pointer-events: none;
+  z-index: 2;
+}
+.gallery-dots .dot {
+  width: 0.45rem;
+  height: 0.45rem;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.55);
+  box-shadow: 0 0 0 1px rgba(19, 47, 55, 0.2);
+}
+.gallery-dots .dot.on {
+  background: #1c7282;
+  width: 1rem;
+}
+.swipe-hint {
+  display: none;
+  position: absolute;
+  top: 0.55rem;
+  inset-inline: 0.55rem;
+  margin: 0;
+  font-size: 0.72rem;
+  font-weight: 800;
+  color: #fff;
+  background: rgba(19, 47, 55, 0.5);
+  border-radius: 999px;
+  padding: 0.25rem 0.65rem;
+  text-align: center;
+  pointer-events: none;
+  z-index: 2;
+}
 .video-box { margin-top: .75rem; border-radius: 1rem; overflow: hidden; background: #000; }
 .video-box video { width: 100%; max-height: 280px; display: block; }
 .top-actions { display: flex; justify-content: space-between; align-items: center; gap: .5rem; flex-wrap: wrap; }
