@@ -1,14 +1,9 @@
 <IfModule mod_rewrite.c>
     RewriteEngine On
 
-    # Shared hosting (Hostinger, etc.): web root = project root,
-    # Laravel assets & front controller live in /public.
+    # Shared hosting: web root = project root, app is served from /public.
     # Domain-independent — only change APP_URL in .env when the host changes.
 
-    # Do not rewrite if already targeting /public
-    RewriteRule ^public/ - [L]
-
-    RewriteRule ^(.*)$ public/$1 [L]
+    RewriteCond %{REQUEST_URI} !^/public/
+    RewriteRule ^(.*)$ /public/$1 [L,QSA]
 </IfModule>
-
-DirectoryIndex public/index.php index.php
