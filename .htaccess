@@ -1,9 +1,12 @@
 <IfModule mod_rewrite.c>
     RewriteEngine On
 
-    # Shared hosting: web root = project root, app is served from /public.
-    # Domain-independent — only change APP_URL in .env when the host changes.
+    # Hostinger / LiteSpeed shared hosting
+    # Keep project in public_html; serve Laravel from public/ (any domain).
 
-    RewriteCond %{REQUEST_URI} !^/public/
-    RewriteRule ^(.*)$ /public/$1 [L,QSA]
+    # Homepage must hit the front controller (avoids 403 on directory listing)
+    RewriteRule ^$ public/index.php [L]
+
+    # Everything else into public/
+    RewriteRule ^(.*)$ public/$1 [L]
 </IfModule>
