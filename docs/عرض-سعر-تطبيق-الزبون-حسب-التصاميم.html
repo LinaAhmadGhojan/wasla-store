@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>عرض سعر — تطبيق الزبون وصلة</title>
+  <style>
+    :root { --brand: #1c7282; --text: #132f37; --muted: #4d6b72; --line: #d7e6e9; }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: "Segoe UI", Tahoma, Arial, sans-serif;
+      color: var(--text);
+      background: #f3f8f9;
+      line-height: 1.7;
+    }
+    .page {
+      max-width: 900px;
+      margin: 24px auto;
+      background: #fff;
+      padding: 40px 48px;
+      border-radius: 12px;
+      box-shadow: 0 8px 30px rgba(0,0,0,.06);
+    }
+    h1 { color: var(--brand); margin: 0 0 8px; font-size: 1.7rem; }
+    h2 { color: var(--brand); border-bottom: 2px solid var(--line); padding-bottom: 6px; margin-top: 2rem; }
+    .meta { color: var(--muted); margin-bottom: 1.5rem; }
+    table { width: 100%; border-collapse: collapse; margin: 1rem 0; }
+    th, td { border: 1px solid var(--line); padding: 10px 12px; text-align: right; }
+    th { background: #e8f5f7; }
+    ul { padding-right: 1.2rem; }
+    .note {
+      background: #e8f5f7;
+      border-right: 4px solid var(--brand);
+      padding: 12px 16px;
+      margin: 1rem 0;
+      border-radius: 6px;
+    }
+    .price { color: var(--brand); font-weight: 700; }
+    .actions {
+      position: sticky; top: 0; z-index: 5;
+      background: #1c7282; color: #fff;
+      padding: 10px 16px; display: flex; gap: 12px; justify-content: center;
+    }
+    .actions button {
+      border: 0; background: #fff; color: var(--brand);
+      padding: 8px 16px; border-radius: 8px; font-weight: 700; cursor: pointer;
+    }
+    @media print {
+      .actions { display: none; }
+      body { background: #fff; }
+      .page { box-shadow: none; margin: 0; padding: 0; max-width: none; }
+    }
+  </style>
+</head>
+<body>
+  <div class="actions">
+    <button onclick="window.print()">حفظ / طباعة PDF</button>
+  </div>
+
+  <div class="page">
+    <h1>عرض سعر — تطبيق الزبون وصلة (Wasla)</h1>
+    <div class="meta">
+      <div><strong>حسب التصاميم:</strong> wasla-ui / wasla-ui2 / wasla-brands / wasla-shein</div>
+      <div><strong>المنصة:</strong> Flutter (Android + iOS) — Backend Laravel جاهز جزئياً</div>
+      <div><strong>التاريخ:</strong> 2026-09-07</div>
+    </div>
+
+    <div class="note">
+      أرقام تقديرية للتنفيذ حسب الشاشات الجاهزة. قابلة للتفاوض حسب خبرة الفريق والمنطقة.
+    </div>
+
+    <h2>ملخص الباقات</h2>
+    <table>
+      <thead>
+        <tr><th>الباقة</th><th>المحتوى</th><th>المدة</th><th>السعر التقديري</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>A — MVP</strong></td>
+          <td>20 شاشة أساسية (تسجيل، متجر، سلة، دفع، طلبات، ملف…)</td>
+          <td>6–9 أسابيع</td>
+          <td class="price">3,500 – 5,500 $</td>
+        </tr>
+        <tr>
+          <td><strong>B — تسوق عالمي</strong></td>
+          <td>Brands + SHEIN داخل التطبيق + لصق رابط + سلة مختلطة</td>
+          <td>+3–5 أسابيع</td>
+          <td class="price">+1,800 – 3,000 $</td>
+        </tr>
+        <tr>
+          <td><strong>C — مميزات متقدمة</strong></td>
+          <td>بحث بالصورة، محفظة، إحالة، مقارنة، Quiz، سلة ذكية، تتبع…</td>
+          <td>+5–8 أسابيع</td>
+          <td class="price">+2,500 – 4,500 $</td>
+        </tr>
+        <tr>
+          <td><strong>الكل معاً</strong></td>
+          <td>A + B + C</td>
+          <td>14–20 أسبوع</td>
+          <td class="price">7,000 – 11,500 $</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <p><strong>تطبيق التوصيل:</strong> غير مشمول — تقديراً لاحقاً 2,000 – 3,500 $.</p>
+
+    <h2>الباقة A — الشاشات الأساسية</h2>
+    <ul>
+      <li>Splash + Onboarding + Login + Signup</li>
+      <li>Home / Categories / Search / Product</li>
+      <li>Cart / Checkout / Order success</li>
+      <li>Orders + Order detail / Favorites</li>
+      <li>Profile / Addresses / Notifications / Support / Settings</li>
+      <li>عربي RTL + هوية Teal + ربط API + دفع محلي + رفع إيصالات</li>
+    </ul>
+
+    <h2>الباقة B — تسوق عالمي</h2>
+    <ul>
+      <li>wasla-brands-01…04: متاجر عالمية، رئيسية، SHEIN، سلة</li>
+      <li>wasla-shein-01…04: لكِ، جديد، فلاش، تصنيفات</li>
+      <li>لصق رابط → معاينة بالليرة → طلب شراء</li>
+    </ul>
+
+    <h2>الباقة C — مميزات ui2</h2>
+    <ul>
+      <li>بحث بالصورة (ربط Image Search)</li>
+      <li>محفظة نقاط + إحالة أصدقاء</li>
+      <li>مقارنة منتجات + Style Quiz</li>
+      <li>سلة ذكية باقتراحات + تتبع + مراجعات + فلاش</li>
+    </ul>
+
+    <h2>خارج النطاق</h2>
+    <ul>
+      <li>تطبيق السائق / التوصيل</li>
+      <li>لوحة أدمن داخل الموبايل</li>
+      <li>رسوم نشر المتاجر + حسابات المطورين</li>
+      <li>صيانة بعد التسليم (اختياري: 150–300 $/شهر)</li>
+    </ul>
+
+    <h2>تقسيم الدفع</h2>
+    <table>
+      <thead>
+        <tr><th>المرحلة</th><th>النسبة</th><th>عند</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>عربون</td><td>30%</td><td>بدء العمل</td></tr>
+        <tr><td>منتصف</td><td>40%</td><td>MVP للتجربة</td></tr>
+        <tr><td>نهائي</td><td>30%</td><td>بعد الاختبار / النشر التجريبي</td></tr>
+      </tbody>
+    </table>
+
+    <h2>توصية</h2>
+    <ol>
+      <li>ابدئي بـ <strong>A</strong></li>
+      <li>ثم <strong>B</strong> (التسوق العالمي)</li>
+      <li>ثم اختاري من <strong>C</strong> حسب الأولوية</li>
+    </ol>
+
+    <div class="note">
+      للطباعة PDF: افتحي هذا الملف بالمتصفح ← Ctrl+P ← Save as PDF<br />
+      نسخة Markdown: <code>docs/عرض-سعر-تطبيق-الزبون-حسب-التصاميم.md</code>
+    </div>
+  </div>
+</body>
+</html>

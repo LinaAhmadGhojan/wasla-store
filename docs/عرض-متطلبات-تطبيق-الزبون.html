@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>عرض متطلبات — تطبيق الزبون وصلة</title>
+  <style>
+    :root { --brand: #1c7282; --text: #132f37; --muted: #4d6b72; --line: #d7e6e9; }
+    * { box-sizing: border-box; }
+    body { margin: 0; font-family: "Segoe UI", Tahoma, Arial, sans-serif; color: var(--text); background: #f3f8f9; line-height: 1.7; }
+    .page { max-width: 900px; margin: 24px auto; background: #fff; padding: 40px 48px; border-radius: 12px; box-shadow: 0 8px 30px rgba(0,0,0,.06); }
+    h1 { color: var(--brand); margin: 0 0 8px; font-size: 1.7rem; }
+    h2 { color: var(--brand); border-bottom: 2px solid var(--line); padding-bottom: 6px; margin-top: 2rem; }
+    h3 { margin-top: 1.25rem; }
+    .meta { color: var(--muted); margin-bottom: 1.5rem; }
+    table { width: 100%; border-collapse: collapse; margin: 1rem 0; }
+    th, td { border: 1px solid var(--line); padding: 10px 12px; text-align: right; }
+    th { background: #e8f5f7; }
+    ul, ol { padding-right: 1.2rem; }
+    .note { background: #e8f5f7; border-right: 4px solid var(--brand); padding: 12px 16px; margin: 1rem 0; border-radius: 6px; }
+    .actions { position: sticky; top: 0; z-index: 5; background: #1c7282; color: #fff; padding: 10px 16px; display: flex; gap: 12px; justify-content: center; }
+    .actions button { border: 0; background: #fff; color: var(--brand); padding: 8px 16px; border-radius: 8px; font-weight: 700; cursor: pointer; }
+    @media print { .actions { display: none; } body { background: #fff; } .page { box-shadow: none; margin: 0; padding: 0; max-width: none; } }
+  </style>
+</head>
+<body>
+  <div class="actions"><button onclick="window.print()">حفظ / طباعة PDF</button></div>
+  <div class="page">
+    <h1>عرض متطلبات — تطبيق الزبون (وصلة)</h1>
+    <div class="meta">
+      <div><strong>نوع الملف:</strong> متطلبات لتقدير التكلفة والمدة فقط لهذا التطبيق</div>
+      <div><strong>المنصة:</strong> Flutter (Android + iOS)</div>
+      <div><strong>الجمهور:</strong> العملاء</div>
+      <div><strong>الخلفية:</strong> Laravel API جاهز — التطبيق يتصل بنفس الـ Backend</div>
+      <div><strong>التاريخ:</strong> 2026-08-20</div>
+    </div>
+
+    <h2>هدف التطبيق</h2>
+    <p>تطبيق موبايل للزبون يتيح التسوق من متجر وصلة، والطلب من مواقع خارجية (مثل SHEIN وغيرها)، والدفع، ومتابعة الطلبات — بنفس منطق الموقع الحالي قدر الإمكان.</p>
+
+    <h2>المتطلبات الوظيفية</h2>
+
+    <h3>1) الهوية واللغة</h3>
+    <ul>
+      <li>واجهة عربية بالكامل (RTL)</li>
+      <li>هوية وصلة (لون أساسي تقريباً #1c7282)</li>
+      <li>دعم Android و iOS</li>
+      <li>إشعارات Push (FCM)</li>
+    </ul>
+
+    <h3>2) الحساب</h3>
+    <ul>
+      <li>تسجيل حساب جديد</li>
+      <li>تسجيل دخول / خروج</li>
+      <li>الملف الشخصي</li>
+      <li>إدارة عناوين التوصيل (إضافة / تعديل / حذف)</li>
+    </ul>
+
+    <h3>3) المتجر المحلي</h3>
+    <ul>
+      <li>تصفح المنتجات مع بحث وفلاتر (فئة، ماركة، بحث نصي)</li>
+      <li>صفحة منتج: صور متعددة، اختيار لون، كل المقاسات (غير المتوفر معطّل)، السعر بالليرة، إضافة للسلة مع الكمية</li>
+      <li>قائمة أمنيات (Wishlist) — اختيارية في المرحلة الأولى إذا أثّرت على السعر</li>
+    </ul>
+
+    <h3>4) الشراء من الخارج (ميزة أساسية)</h3>
+    <p>المنصات: SHEIN، Trendyol، Temu، Noon، Amazon (وغيرها حسب الإعدادات).</p>
+    <ul>
+      <li><strong>لصق رابط منتج</strong> → معاينة السعر بالليرة (منتج + شحن + رسوم) → إضافة للسلة / طلب شراء</li>
+      <li><strong>تصفح داخل المنصة</strong> من التطبيق (WebView أو كتالوج عبر API)</li>
+    </ul>
+
+    <h3>5) السلة والدفع</h3>
+    <ul>
+      <li>سلة + Checkout</li>
+      <li>طرق الدفع: كاش عند الاستلام، سيرياتيل كاش، MTN كاش، شام كاش، تحويل بنكي، رصيد المتجر</li>
+      <li>رفع صورة إيصال عند الحاجة</li>
+      <li>صفحة تأكيد الطلب</li>
+    </ul>
+
+    <h3>6) طلباتي</h3>
+    <ul>
+      <li>طلبات المتجر المحلي + طلبات الشراء من الخارج</li>
+      <li>تفاصيل: منتجات، أسعار، حالة الطلب، حالة الدفع</li>
+      <li>إشعارات عند تغيّر الحالة / تأكيد الدفع</li>
+    </ul>
+
+    <h3>7) التكامل التقني</h3>
+    <ul>
+      <li>ربط API الحالي (Laravel Sanctum)</li>
+      <li>سلة للضيف ثم تسجيل دخول عند الدفع</li>
+      <li>رفع صور الإيصالات</li>
+      <li>الأسعار والرسوم من الـ Backend</li>
+    </ul>
+
+    <h2>خارج النطاق</h2>
+    <ul>
+      <li>لوحة الأدمن داخل التطبيق (تبقى ويب)</li>
+      <li>تطبيق التوصيل (ملف متطلبات منفصل)</li>
+      <li>إرسال واتساب من التطبيق</li>
+      <li>تعديل أسعار الصرف من التطبيق</li>
+    </ul>
+
+    <h2>ما هو جاهز في الـ Backend</h2>
+    <ul>
+      <li>Auth / Products / Categories / Brands</li>
+      <li>Cart / Orders / Addresses</li>
+      <li>External platforms + preview رابط منتج</li>
+      <li>Purchase requests + submit payment</li>
+      <li>Currency</li>
+    </ul>
+    <div class="note">قد تحتاج تحسينات بسيطة للموبايل (رفع صور، pagination، push tokens) — يرجى توضيح إن كانت مشمولة بالسعر.</div>
+
+    <h2>مقترح المراحل</h2>
+    <ul>
+      <li><strong>MVP:</strong> تسجيل + متجر + منتج + سلة + دفع + طلباتي + لصق رابط خارجي</li>
+      <li><strong>مرحلة 2:</strong> تصفح المنصات داخل التطبيق + Wishlist + Push + تحسينات UI</li>
+    </ul>
+
+    <h2>طلب التسعير (تطبيق الزبون فقط)</h2>
+    <ol>
+      <li>التكلفة الإجمالية (Android + iOS)</li>
+      <li>مدة التنفيذ بالأسابيع</li>
+      <li>هل السعر يشمل: تصميم UI/UX؟ ربط الـ API؟ أي Backend إضافي؟ النشر على المتاجر؟ صيانة بعد التسليم؟</li>
+      <li>تقسيم الدفع (عربون / مراحل)</li>
+      <li>تسعير MVP منفصل عن المرحلة الثانية إن أمكن</li>
+    </ol>
+
+    <h2>معلومات المشروع</h2>
+    <table>
+      <tr><th>اسم المشروع</th><td>وصلة — Wasla Store</td></tr>
+      <tr><th>نوع التطبيق</th><td>تطبيق الزبون فقط</td></tr>
+      <tr><th>النظام الحالي</th><td>Laravel API + Storefront</td></tr>
+      <tr><th>اللغة</th><td>العربية (RTL)</td></tr>
+      <tr><th>المنطقة</th><td>سوريا (ل.س + محافظ محلية)</td></tr>
+    </table>
+  </div>
+</body>
+</html>

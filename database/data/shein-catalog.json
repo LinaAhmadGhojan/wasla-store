@@ -1,0 +1,133 @@
+{
+  "products": [
+    {
+      "goods_id": "65524961",
+      "default_sku": "sa2501022348506000",
+      "default_color": "multicolor-navy",
+      "default_size": "3-6m",
+      "base_price": 18.5,
+      "name": "طقم فستان وقبعة بناتي بطباعة زهور — قطعتان",
+      "name_en": "2pcs Baby Girl Floral Print Dress + Hat Set",
+      "description": "طقم بناتي خفيف للربيع والصيف: فستان + قبعة. الألوان من صفحة SHEIN — بما فيها خيار متعدد الألوان (كل نقش له صورته حتى لو الاسم نفسه).",
+      "url": "https://ar.shein.com/2pcs-Baby-Girl-Floral-Print-Dress-Hat-Set-Casual-Elegant-Style-Lightweight-For-Spring-Summer-p-65524961.html",
+      "currency": "AED",
+      "category_slug": "kids-clothing-dresses",
+      "brand": "HolaBebe",
+      "specs": [
+        { "label": "تفاصيل", "value": "الطباعة الكاملة" },
+        { "label": "خط العنق", "value": "الأشرطة السباغيتي" },
+        { "label": "أصناف التصميم", "value": "نباتات" },
+        { "label": "نوع", "value": "كامي" },
+        { "label": "محيط الخصر", "value": "ارتفاع الخصر" },
+        { "label": "شكل الكفة", "value": "يلمع أو يوهج" },
+        { "label": "ميزة", "value": "مضادة للتجاعيد" },
+        { "label": "مبطنة لمزيد من الدفء", "value": "لا" },
+        { "label": "لون", "value": "الأحمر" },
+        { "label": "فساتين طول الأكمام", "value": "بدون أكمام" },
+        { "label": "أسلوب", "value": "عطلة" },
+        { "label": "فساتين الطول", "value": "طويل" },
+        { "label": "نوع الشكل", "value": "النمط العادي" },
+        { "label": "مرونة القماش", "value": "غير متمدد" },
+        { "label": "فساتين المواد", "value": "البوليستر" },
+        { "label": "فساتين بطانة", "value": "غير مبطنة" },
+        { "label": "ارشادات العناية", "value": "غسيل في الغسالة أو التنظيف الجاف الاحترافي" },
+        { "label": "الجيب", "value": "لا" },
+        { "label": "شفاف", "value": "لا" },
+        { "label": "النوع (ذكر، أنثى)", "value": "فتيات" },
+        { "label": "فساتين تكوين", "value": "البوليستر 95%، إلاستان 5%" }
+      ],
+      "size_chart": {
+        "unit": "cm",
+        "note": "تم الحصول على هذه البيانات عبر قياس المنتج يدوياً، وقد تتباين القياسات بمقدار 1-2 سم",
+        "columns": ["مقاس", "قياس الصدر", "قياس الخصر", "الطول", "طول الأشرطة"],
+        "rows": [
+          ["3-6M", "52", "44", "40", "13"],
+          ["6-9M", "54", "46", "43", "13.5"],
+          ["9-12M", "56", "48", "46", "14"],
+          ["12-18M", "58", "50", "49", "14.5"],
+          ["18-24M", "60", "52", "52", "15"],
+          ["2-3Y", "62", "54", "55", "15.5"]
+        ]
+      },
+      "colors": [
+        {
+          "key": "blue-floral",
+          "name": "الأزرق",
+          "hex": "#5b8fc7",
+          "attr_id": "441",
+          "images": ["/products/shein/65524961/blue-floral/01.jpg"]
+        },
+        {
+          "key": "red",
+          "name": "الأحمر",
+          "hex": "#c45c5c",
+          "attr_id": "442",
+          "images": ["/products/shein/65524961/red/01.jpg"]
+        },
+        {
+          "key": "multicolor-navy",
+          "name": "متعدد الألوان",
+          "hex": "#1e3a5f",
+          "attr_id": "447",
+          "images": ["/products/shein/65524961/multicolor-navy/01.jpg"]
+        },
+        {
+          "key": "lime",
+          "name": "أخضر ليمون",
+          "hex": "#c4d45a",
+          "attr_id": "443",
+          "images": ["/products/shein/65524961/lime/01.jpg"]
+        },
+        {
+          "key": "dark-blue",
+          "name": "أزرق غامق",
+          "hex": "#1a365d",
+          "attr_id": "444",
+          "images": ["/products/shein/65524961/dark-blue/01.jpg"]
+        },
+        {
+          "key": "blue-bunch",
+          "name": "الأزرق",
+          "hex": "#6a9bc3",
+          "attr_id": "445",
+          "images": ["/products/shein/65524961/blue-bunch/01.jpg"]
+        },
+        {
+          "key": "rose",
+          "name": "روز أحمر",
+          "hex": "#e07a9a",
+          "attr_id": "446",
+          "images": ["/products/shein/65524961/rose/01.jpg"]
+        },
+        {
+          "key": "light-blue",
+          "name": "أزرق فاتح اللون",
+          "hex": "#9ec9e0",
+          "attr_id": "448",
+          "images": ["/products/shein/65524961/light-blue/01.jpg"]
+        },
+        {
+          "key": "multicolor-ditsy",
+          "name": "متعدد الألوان",
+          "hex": "#d4a5c9",
+          "attr_id": "449",
+          "images": ["/products/shein/65524961/multicolor-ditsy/01.jpg"]
+        },
+        {
+          "key": "multicolor-stems",
+          "name": "متعدد الألوان",
+          "hex": "#e8b4c8",
+          "attr_id": "450",
+          "images": ["/products/shein/65524961/multicolor-stems/01.jpg"]
+        }
+      ],
+      "sizes": [
+        { "key": "0-3m", "name": "0-3M" },
+        { "key": "3-6m", "name": "3-6M" },
+        { "key": "6-12m", "name": "6-12M" },
+        { "key": "12-18m", "name": "12-18M" },
+        { "key": "18-24m", "name": "18-24M" }
+      ]
+    }
+  ]
+}

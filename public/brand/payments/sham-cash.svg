@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="4'E C'4">
+  <rect width="64" height="64" rx="14" fill="#6B2D8B"/>
+  <rect x="16" y="16" width="32" height="24" rx="6" fill="#F3E9FF"/>
+  <circle cx="32" cy="28" r="6" fill="#6B2D8B"/>
+  <path d="M22 48h20" stroke="#F3E9FF" stroke-width="3" stroke-linecap="round"/>
+  <text x="32" y="58" text-anchor="middle" fill="#fff" font-size="8" font-family="Tahoma, Arial" font-weight="700">4'E C'4</text>
+</svg>

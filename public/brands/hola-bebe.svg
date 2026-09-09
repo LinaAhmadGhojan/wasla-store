@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" role="img" aria-label="HolaBebe">
+  <rect width="200" height="200" rx="28" fill="#ff4d8d"/>
+  <circle cx="100" cy="100" r="78" fill="#ffffff"/>
+  <text x="100" y="38" text-anchor="middle" font-family="Arial, sans-serif" font-size="13" font-weight="700" fill="#ff4d8d" letter-spacing="2">HOLA BEBE</text>
+  <text x="100" y="128" text-anchor="middle" font-family="Georgia, serif" font-size="92" font-weight="700" fill="#ff4d8d">H</text>
+</svg>

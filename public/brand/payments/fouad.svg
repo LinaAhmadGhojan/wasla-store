@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="'DA$'/">
+  <rect width="64" height="64" rx="14" fill="#1A4F8B"/>
+  <circle cx="32" cy="28" r="14" fill="#E8F1FF"/>
+  <path d="M24 28c0-4 3.5-7 8-7s8 3 8 7-3.5 8-8 8-8-4-8-8z" fill="#1A4F8B" opacity=".15"/>
+  <text x="32" y="34" text-anchor="middle" fill="#1A4F8B" font-size="16" font-family="Tahoma, Arial" font-weight="800">A</text>
+  <text x="32" y="56" text-anchor="middle" fill="#fff" font-size="9" font-family="Tahoma, Arial" font-weight="700">'DA$'/</text>
+</svg>

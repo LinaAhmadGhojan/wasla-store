@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="15J/ 'DE*,1">
+  <rect width="64" height="64" rx="14" fill="#1c7282"/>
+  <path d="M18 40 V24 h10 c6 0 10 3 10 8s-4 8-10 8H18z" fill="#E7F7FA"/>
+  <path d="M28 24 h8 c5 0 9 3 9 8s-4 8-9 8h-8" fill="none" stroke="#E7F7FA" stroke-width="3"/>
+  <circle cx="44" cy="22" r="5" fill="#F4E7C5"/>
+  <text x="32" y="56" text-anchor="middle" fill="#fff" font-size="9" font-family="Tahoma, Arial" font-weight="700">15J/</text>
+</svg>
