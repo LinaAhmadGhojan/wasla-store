@@ -75,4 +75,15 @@ const year = new Date().getFullYear();
   font-size: 0.8rem;
   width: 100%;
 }
+@media (max-width: 700px) {
+  .footer-inner {
+    padding: 1.75rem 1rem 2rem;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+  .footer-links {
+    gap: 0.85rem 1.1rem;
+  }
+}
 </style>

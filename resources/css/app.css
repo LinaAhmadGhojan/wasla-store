@@ -10,6 +10,26 @@ body {
   margin: 0;
   background: #f5fbfc;
   min-height: 100vh;
+  overflow-x: clip;
+}
+
+img, video, svg {
+  max-width: 100%;
+  height: auto;
+}
+
+#app {
+  min-width: 0;
+}
+
+@media (max-width: 860px) {
+  html {
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    overflow-x: hidden;
+  }
 }
 
 .btn {

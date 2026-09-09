@@ -1259,7 +1259,7 @@ onMounted(() => {
 .table-scroll { overflow-x: auto; }
 .size-chart-table {
   width: 100%;
-  min-width: 360px;
+  min-width: 0;
   border-collapse: collapse;
   background: #fff;
 }
@@ -1525,6 +1525,10 @@ onMounted(() => {
     margin-top: 1rem;
   }
   .product-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 480px) {
+  .product-grid { grid-template-columns: 1fr; }
+  .buy-column { min-width: 0 !important; }
 }
 .hero-img { transition: transform .12s ease-out; will-change: transform; cursor: zoom-in; }
 .zoom-hint { position: absolute; bottom: .5rem; inset-inline: .5rem; margin: 0; font-size: .75rem; color: #fff; background: rgba(19,47,55,.55); border-radius: .5rem; padding: .25rem .5rem; text-align: center; }
