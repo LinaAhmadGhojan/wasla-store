@@ -1,13 +1,20 @@
 <template>
   <header class="storefront-nav" dir="rtl">
     <div class="nav-top">
-      <a href="/" class="brand" aria-label="وصلة">
-        <img :src="logoUrl" alt="وصلة WASLA" class="brand-logo" />
+      <a href="/" class="brand" aria-label="وصلة — تسوق شي إن في سوريا">
+        <img :src="logoUrl" alt="وصلة WASLA — توصيل شي إن لسوريا" class="brand-logo" />
       </a>
 
       <div class="nav-actions">
-        <a href="/cart" class="cart-link mobile-only" aria-label="السلة">
-          السلة
+        <a href="/cart" class="cart-pill mobile-only" aria-label="سلة التسوق">
+          <span class="cart-ico" aria-hidden="true">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="9" cy="20" r="1.4" fill="currentColor" stroke="none"/>
+              <circle cx="18" cy="20" r="1.4" fill="currentColor" stroke="none"/>
+              <path d="M3 4h2l2.4 11.2a1.5 1.5 0 0 0 1.5 1.2h8.3a1.5 1.5 0 0 0 1.5-1.2L20 8H7"/>
+            </svg>
+          </span>
+          <span class="cart-label">السلة</span>
           <span v-if="store.cartCount > 0" class="cart-badge">{{ store.cartCount }}</span>
         </a>
         <button
@@ -15,9 +22,13 @@
           class="menu-toggle mobile-only"
           :aria-expanded="menuOpen ? 'true' : 'false'"
           aria-controls="storefront-menu"
+          :aria-label="menuOpen ? 'إغلاق القائمة' : 'فتح القائمة'"
           @click="menuOpen = !menuOpen"
         >
-          {{ menuOpen ? 'إغلاق' : 'القائمة' }}
+          <span class="burger" aria-hidden="true">
+            <span /><span /><span />
+          </span>
+          <span class="menu-label">{{ menuOpen ? 'إغلاق' : 'المزيد' }}</span>
         </button>
       </div>
 
@@ -27,7 +38,7 @@
           type="search"
           name="q"
           :value="initialQuery"
-          placeholder="بحث متقدم: اسم، SKU، براند…"
+          placeholder="ابحثي عن منتج… شي إن، براند، SKU"
           aria-label="بحث عن منتج"
         />
       </form>
@@ -37,12 +48,20 @@
         class="nav-links"
         :class="{ open: menuOpen }"
       >
-        <a href="/shop" @click="closeMenu">تصفح</a>
+        <p class="menu-title mobile-only">روابط سريعة</p>
+        <a href="/shop" @click="closeMenu">تصفح المنتجات</a>
+        <a href="/browse" @click="closeMenu">تسوق شي إن والعالمي</a>
+        <a href="/buy-from-anywhere" @click="closeMenu">لصق رابط منتج</a>
         <a href="/compare" @click="closeMenu">مقارنة</a>
-        <a href="/browse" @click="closeMenu">تسوق عالمي</a>
-        <a href="/buy-from-anywhere" @click="closeMenu">لصق رابط</a>
-        <a href="/cart" class="cart-link desktop-inline" @click="closeMenu">
-          السلة
+        <a href="/cart" class="cart-pill desktop-inline" @click="closeMenu">
+          <span class="cart-ico" aria-hidden="true">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="9" cy="20" r="1.4" fill="currentColor" stroke="none"/>
+              <circle cx="18" cy="20" r="1.4" fill="currentColor" stroke="none"/>
+              <path d="M3 4h2l2.4 11.2a1.5 1.5 0 0 0 1.5 1.2h8.3a1.5 1.5 0 0 0 1.5-1.2L20 8H7"/>
+            </svg>
+          </span>
+          <span class="cart-label">السلة</span>
           <span v-if="store.cartCount > 0" class="cart-badge">{{ store.cartCount }}</span>
         </a>
         <template v-if="store.currentUser">
@@ -166,7 +185,7 @@ async function onLogout() {
 .nav-links {
   display: flex;
   align-items: center;
-  gap: 1.1rem;
+  gap: 1rem;
   flex-shrink: 0;
   font-weight: 700;
   font-size: 0.92rem;
@@ -176,17 +195,46 @@ async function onLogout() {
   text-decoration: none;
 }
 .nav-links a:hover { color: rgba(255, 255, 255, 0.82); }
-.cart-link { position: relative; }
+.menu-title { display: none; }
+.cart-pill {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.4rem 0.85rem 0.4rem 0.7rem;
+  border-radius: 999px;
+  background: #ffffff;
+  color: #0f5a66 !important;
+  font-weight: 900;
+  text-decoration: none;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.12);
+  border: 1.5px solid #ffffff;
+  line-height: 1;
+}
+.cart-pill:hover { color: #0b3d44 !important; filter: brightness(0.98); }
+.cart-ico {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: #1c7282;
+}
+.cart-label { font-size: 0.88rem; }
 .cart-badge {
   position: absolute;
-  top: -0.55rem;
-  left: -0.75rem;
+  top: -0.45rem;
+  inset-inline-start: -0.35rem;
   background: #e0455a;
   color: white;
   font-size: 0.68rem;
-  padding: 0.05rem 0.38rem;
+  min-width: 1.15rem;
+  height: 1.15rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 0.28rem;
   border-radius: 999px;
-  font-weight: 800;
+  font-weight: 900;
+  border: 2px solid #fff;
 }
 .nav-user { color: rgba(255, 255, 255, 0.92); font-weight: 600; }
 .nav-logout { color: #ffb3b3 !important; }
@@ -200,28 +248,44 @@ async function onLogout() {
 .nav-actions {
   display: none;
   align-items: center;
-  gap: 0.55rem;
+  gap: 0.5rem;
   margin-inline-start: auto;
 }
 .menu-toggle {
-  border: 1.5px solid rgba(255, 255, 255, 0.55);
-  background: rgba(255, 255, 255, 0.12);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  border: 1.5px solid rgba(255, 255, 255, 0.65);
+  background: rgba(255, 255, 255, 0.16);
   color: #fff;
   border-radius: 999px;
-  padding: 0.45rem 0.85rem;
-  font-weight: 800;
+  padding: 0.42rem 0.8rem 0.42rem 0.65rem;
+  font-weight: 900;
   cursor: pointer;
-  font-size: 0.85rem;
+  font-size: 0.82rem;
 }
+.burger {
+  display: inline-flex;
+  flex-direction: column;
+  gap: 3px;
+  width: 16px;
+}
+.burger span {
+  display: block;
+  height: 2px;
+  width: 100%;
+  background: #fff;
+  border-radius: 99px;
+}
+.menu-label { letter-spacing: 0; }
 .menu-backdrop {
   position: fixed;
   inset: 0;
-  top: 0;
   background: rgba(11, 40, 46, 0.35);
   z-index: 40;
 }
 .mobile-only { display: none !important; }
-.desktop-inline { display: inline; }
+.desktop-inline { display: inline-flex !important; }
 
 @media (max-width: 860px) {
   .nav-top {
@@ -246,20 +310,27 @@ async function onLogout() {
     inset-inline: 0.75rem;
     flex-direction: column;
     align-items: stretch;
-    gap: 0;
+    gap: 0.15rem;
     background: #0f5a66;
     border-radius: 1rem;
-    padding: 0.5rem;
+    padding: 0.65rem;
     box-shadow: 0 18px 40px rgba(15, 79, 90, 0.35);
     z-index: 60;
-    max-height: min(70vh, 480px);
+    max-height: min(70vh, 520px);
     overflow: auto;
   }
   .nav-links.open { display: flex; }
+  .menu-title {
+    display: block;
+    margin: 0.15rem 0.5rem 0.45rem;
+    color: #a9d7de;
+    font-size: 0.78rem;
+    font-weight: 800;
+  }
   .nav-links a,
   .nav-links .nav-user,
   .nav-links .btn-login {
-    padding: 0.75rem 0.9rem;
+    padding: 0.8rem 0.9rem;
     border-radius: 0.75rem;
   }
   .nav-links a:hover { background: rgba(255, 255, 255, 0.08); }
@@ -267,6 +338,9 @@ async function onLogout() {
     text-align: center;
     margin-top: 0.25rem;
   }
-  .storefront-nav { position: sticky; }
+  .cart-pill {
+    padding: 0.45rem 0.8rem;
+  }
+  .cart-label { font-size: 0.84rem; }
 }
 </style>

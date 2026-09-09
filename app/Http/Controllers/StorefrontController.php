@@ -115,4 +115,20 @@ class StorefrontController extends Controller
             'productId' => $product,
         ]);
     }
+
+    public function sitemap()
+    {
+        $urls = [
+            ['loc' => url('/'), 'priority' => '1.0', 'changefreq' => 'daily'],
+            ['loc' => url('/shop'), 'priority' => '0.95', 'changefreq' => 'daily'],
+            ['loc' => url('/browse'), 'priority' => '0.9', 'changefreq' => 'weekly'],
+            ['loc' => url('/browse/shein'), 'priority' => '0.9', 'changefreq' => 'weekly'],
+            ['loc' => url('/buy-from-anywhere'), 'priority' => '0.85', 'changefreq' => 'weekly'],
+            ['loc' => url('/compare'), 'priority' => '0.5', 'changefreq' => 'weekly'],
+        ];
+
+        $xml = view('storefront.sitemap', ['urls' => $urls])->render();
+
+        return response($xml, 200)->header('Content-Type', 'application/xml; charset=UTF-8');
+    }
 }
