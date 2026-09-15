@@ -6,6 +6,9 @@ use App\Http\Controllers\Admin\BrandController as AdminBrandController;
 use App\Http\Controllers\Admin\CategoryController as AdminCategoryController;
 use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\Admin\ExchangeRateController as AdminExchangeRateController;
+use App\Http\Controllers\Admin\ExpressCategoryController as AdminExpressCategoryController;
+use App\Http\Controllers\Admin\ExpressMenuItemController as AdminExpressMenuItemController;
+use App\Http\Controllers\Admin\ExpressStoreController as AdminExpressStoreController;
 use App\Http\Controllers\Admin\ExternalPlatformController as AdminExternalPlatformController;
 use App\Http\Controllers\Admin\NotificationController as AdminNotificationController;
 use App\Http\Controllers\Admin\OrderController as AdminOrderController;
@@ -37,6 +40,9 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', [StorefrontController::class, 'shop'])->name('home');
 Route::get('/sitemap.xml', [StorefrontController::class, 'sitemap'])->name('sitemap');
 Route::get('/shop', [StorefrontController::class, 'shop'])->name('storefront.shop');
+Route::get('/express', [StorefrontController::class, 'express'])->name('storefront.express');
+Route::get('/express/stores/{store}', [StorefrontController::class, 'expressStoreShow'])->whereNumber('store')->name('storefront.express.store');
+Route::get('/express/items/{item}', [StorefrontController::class, 'expressItemShow'])->whereNumber('item')->name('storefront.express.item');
 Route::get('/compare', [StorefrontController::class, 'compare'])->name('storefront.compare');
 Route::get('/product/{product}', [StorefrontController::class, 'productShow'])->name('storefront.product');
 Route::get('/products/{product}', [StorefrontController::class, 'productShow'])->whereNumber('product');
@@ -77,6 +83,10 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::resource('categories', AdminCategoryController::class)->except(['show']);
     Route::resource('vendors', AdminVendorController::class)->except(['show']);
     Route::resource('brands', AdminBrandController::class)->except(['show']);
+
+    Route::resource('express-categories', AdminExpressCategoryController::class)->except(['show']);
+    Route::resource('express-stores', AdminExpressStoreController::class)->except(['show']);
+    Route::resource('express-items', AdminExpressMenuItemController::class)->except(['show']);
 
     Route::resource('attributes', AdminAttributeController::class)->except(['show']);
     Route::post('attributes/{attribute}/values', [AdminAttributeValueController::class, 'store'])->name('attributes.values.store');

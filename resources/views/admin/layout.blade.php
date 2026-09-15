@@ -226,6 +226,7 @@
                     // Detect active section to auto-expand it
                     $activeSection = match(true) {
                         request()->routeIs('admin.products.*','admin.categories.*','admin.brands.*','admin.attributes.*','admin.vendors.*') => 'catalog',
+                        request()->routeIs('admin.express-categories.*','admin.express-stores.*','admin.express-items.*') => 'express',
                         request()->routeIs('admin.orders.*','admin.purchase-requests.*','admin.procurement-batches.*','admin.external-platforms.*','admin.exchange-rate.*') => 'orders',
                         request()->routeIs('admin.whatsapp.*','admin.whatsapp-messages.*','admin.whatsapp-groups.*') => 'whatsapp',
                         request()->routeIs('admin.users.*','admin.settings.*') => 'accounts',
@@ -249,6 +250,17 @@
                         <a href="{{ route('admin.brands.index') }}" class="@if(request()->routeIs('admin.brands.*')) active @endif">🏷 الماركات</a>
                         <a href="{{ route('admin.attributes.index') }}" class="@if(request()->routeIs('admin.attributes.*')) active @endif">⚙️ الخصائص</a>
                         <a href="{{ route('admin.vendors.index') }}" class="@if(request()->routeIs('admin.vendors.*')) active @endif">🏪 المتاجر</a>
+                    </div>
+
+                    {{-- ── وصلة السريعة ── --}}
+                    <button class="sidebar-group-toggle @if($activeSection==='express') open @endif" data-target="grp-express">
+                        <span>وصلة السريعة</span>
+                        <svg class="toggle-arrow" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.17l3.71-3.94a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z" clip-rule="evenodd"/></svg>
+                    </button>
+                    <div class="sidebar-group @if($activeSection==='express') open @endif" id="grp-express">
+                        <a href="{{ route('admin.express-stores.index') }}" class="@if(request()->routeIs('admin.express-stores.*')) active @endif">🍽 متاجر سريعة</a>
+                        <a href="{{ route('admin.express-items.index') }}" class="@if(request()->routeIs('admin.express-items.*')) active @endif">🥙 أطباق وقوائم</a>
+                        <a href="{{ route('admin.express-categories.index') }}" class="@if(request()->routeIs('admin.express-categories.*')) active @endif">🗂 تصنيفات سريعة</a>
                     </div>
 
                     {{-- ── الطلبات ── --}}

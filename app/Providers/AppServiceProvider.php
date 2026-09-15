@@ -4,6 +4,21 @@ namespace App\Providers;
 
 use App\Contracts\ExternalCatalogBrowserInterface;
 use App\Contracts\ExternalPlatformServiceInterface;
+use App\Models\Brand;
+use App\Models\Category;
+use App\Models\Collection;
+use App\Models\ExchangeRate;
+use App\Models\ExpressCategory;
+use App\Models\ExpressMenuItem;
+use App\Models\ExpressMenuItemExtra;
+use App\Models\ExpressMenuItemVariant;
+use App\Models\ExpressStore;
+use App\Models\Product;
+use App\Models\ProductImage;
+use App\Models\ProductVariant;
+use App\Models\Vendor;
+use App\Observers\CatalogCacheObserver;
+use App\Observers\ExpressCacheObserver;
 use App\Services\ExternalShopping\ManualReviewPlatformService;
 use App\Services\ExternalShopping\MockExternalCatalogBrowser;
 use App\Services\ExternalShopping\SearchApiExternalCatalogBrowser;
@@ -42,5 +57,22 @@ class AppServiceProvider extends ServiceProvider
         ResetPassword::createUrlUsing(function (object $notifiable, string $token) {
             return url('/reset-password?token='.$token.'&email='.urlencode($notifiable->getEmailForPasswordReset()));
         });
+
+        $observer = CatalogCacheObserver::class;
+        Product::observe($observer);
+        ProductVariant::observe($observer);
+        ProductImage::observe($observer);
+        Category::observe($observer);
+        Brand::observe($observer);
+        Vendor::observe($observer);
+        Collection::observe($observer);
+        ExchangeRate::observe($observer);
+
+        $expressObserver = ExpressCacheObserver::class;
+        ExpressCategory::observe($expressObserver);
+        ExpressStore::observe($expressObserver);
+        ExpressMenuItem::observe($expressObserver);
+        ExpressMenuItemVariant::observe($expressObserver);
+        ExpressMenuItemExtra::observe($expressObserver);
     }
 }

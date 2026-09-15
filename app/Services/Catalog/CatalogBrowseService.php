@@ -18,31 +18,61 @@ class CatalogBrowseService
 {
     public function browse(Request $request): array
     {
-        $query = $this->baseQuery();
-        $this->applyBrowseScope($query, $request);
-        $this->applySearch($query, $request);
-        $this->applyFilters($query, $request);
-        $this->applySort($query, $request);
-
         if ($request->filled('q')) {
             SearchQuery::record((string) $request->query('q'));
         }
 
-        /** @var LengthAwarePaginator $page */
-        $page = $query->paginate(min(48, max(8, (int) $request->query('per_page', 16))))->withQueryString();
+        $runner = function () use ($request) {
+            $query = $this->baseQuery();
+            $this->applyBrowseScope($query, $request);
+            $this->applySearch($query, $request);
+            $this->applyFilters($query, $request);
+            $this->applySort($query, $request);
 
-        return [
-            'products' => $page,
-            'meta' => [
-                'section' => $request->query('section'),
-                'sort' => $request->query('sort', 'newest'),
-                'q' => $request->query('q'),
-                'active_filters' => $this->activeFilterSummary($request),
-            ],
-        ];
+            /** @var LengthAwarePaginator $page */
+            $page = $query->paginate(min(48, max(8, (int) $request->query('per_page', 16))))->withQueryString();
+
+            return [
+                'products' => $page,
+                'meta' => [
+                    'section' => $request->query('section'),
+                    'sort' => $request->query('sort', 'newest'),
+                    'q' => $request->query('q'),
+                    'active_filters' => $this->activeFilterSummary($request),
+                ],
+            ];
+        };
+
+        if (! config('catalog_cache.enabled', true)) {
+            return $runner();
+        }
+
+        return CatalogCache::remember('browse', $this->cacheParams($request), CatalogCache::TTL_BROWSE, $runner);
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    private function cacheParams(Request $request): array
+    {
+        $params = $request->query();
+        ksort($params);
+
+        return $params;
     }
 
     public function facets(Request $request): array
+    {
+        $runner = fn () => $this->facetsUncached($request);
+
+        if (! config('catalog_cache.enabled', true)) {
+            return $runner();
+        }
+
+        return CatalogCache::remember('facets', $this->cacheParams($request), CatalogCache::TTL_FACETS, $runner);
+    }
+
+    private function facetsUncached(Request $request): array
     {
         $category = null;
         if ($request->filled('category_id')) {
@@ -203,74 +233,97 @@ class CatalogBrowseService
             ];
         }
 
-        $lower = mb_strtolower($q);
-        $phraseSuggestions = [];
-        foreach (config('catalog.suggestion_prefixes', []) as $prefix => $list) {
-            if (str_starts_with($lower, mb_strtolower($prefix)) || str_contains($lower, mb_strtolower($prefix))) {
-                foreach ($list as $phrase) {
-                    if (str_contains(mb_strtolower($phrase), $lower) || str_starts_with(mb_strtolower($phrase), $lower)) {
-                        $phraseSuggestions[] = $phrase;
+        $runner = function () use ($q, $limit) {
+            $lower = mb_strtolower($q);
+            $phraseSuggestions = [];
+            foreach (config('catalog.suggestion_prefixes', []) as $prefix => $list) {
+                if (str_starts_with($lower, mb_strtolower($prefix)) || str_contains($lower, mb_strtolower($prefix))) {
+                    foreach ($list as $phrase) {
+                        if (str_contains(mb_strtolower($phrase), $lower) || str_starts_with(mb_strtolower($phrase), $lower)) {
+                            $phraseSuggestions[] = $phrase;
+                        }
                     }
                 }
             }
-        }
 
-        // Complete typed query with common fashion suffixes
-        $suffixes = ['Dress', 'Maxi Dress', 'Evening Dress', 'Summer Dress', 'Shirt', 'Sneakers', 'Bag'];
-        if (! preg_match('/\s/u', $q) && mb_strlen($q) >= 3) {
-            foreach ($suffixes as $suf) {
-                $phraseSuggestions[] = trim($q.' '.$suf);
+            $suffixes = ['Dress', 'Maxi Dress', 'Evening Dress', 'Summer Dress', 'Shirt', 'Sneakers', 'Bag'];
+            if (! preg_match('/\s/u', $q) && mb_strlen($q) >= 3) {
+                foreach ($suffixes as $suf) {
+                    $phraseSuggestions[] = trim($q.' '.$suf);
+                }
             }
+
+            $nameHits = Product::query()
+                ->where('is_active', true)
+                ->where('name', 'like', "%{$q}%")
+                ->orderByDesc('view_count')
+                ->limit($limit)
+                ->pluck('name')
+                ->all();
+
+            $phraseSuggestions = array_values(array_unique(array_merge($phraseSuggestions, $nameHits)));
+            $phraseSuggestions = array_slice($phraseSuggestions, 0, $limit);
+
+            $products = Product::with(['brand', 'vendor'])
+                ->where('is_active', true)
+                ->where(function (Builder $b) use ($q) {
+                    $b->where('name', 'like', "%{$q}%")
+                        ->orWhere('keywords', 'like', "%{$q}%")
+                        ->orWhereHas('variants', fn ($v) => $v->where('sku', 'like', "%{$q}%"))
+                        ->orWhereHas('brand', fn ($br) => $br->where('name', 'like', "%{$q}%"));
+                })
+                ->orderByDesc('is_featured')
+                ->limit(6)
+                ->get(['id', 'name', 'image', 'price', 'sale_price', 'brand_id', 'vendor_id', 'pricing_type']);
+
+            $brands = Brand::query()->where('name', 'like', "%{$q}%")->limit(5)->get(['id', 'name', 'slug']);
+            $categories = Category::query()->where('is_active', true)->where('name', 'like', "%{$q}%")->limit(5)->get(['id', 'name', 'slug']);
+            $stores = Vendor::query()->where('store_name', 'like', "%{$q}%")->limit(5)->get(['id', 'store_name']);
+
+            return [
+                'suggestions' => $phraseSuggestions,
+                'products' => $products,
+                'brands' => $brands,
+                'categories' => $categories,
+                'stores' => $stores,
+            ];
+        };
+
+        if (! config('catalog_cache.enabled', true)) {
+            return $runner();
         }
 
-        $nameHits = Product::query()
-            ->where('is_active', true)
-            ->where('name', 'like', "%{$q}%")
-            ->orderByDesc('view_count')
-            ->limit($limit)
-            ->pluck('name')
-            ->all();
-
-        $phraseSuggestions = array_values(array_unique(array_merge($phraseSuggestions, $nameHits)));
-        $phraseSuggestions = array_slice($phraseSuggestions, 0, $limit);
-
-        $products = Product::with(['brand', 'vendor'])
-            ->where('is_active', true)
-            ->where(function (Builder $b) use ($q) {
-                $b->where('name', 'like', "%{$q}%")
-                    ->orWhere('keywords', 'like', "%{$q}%")
-                    ->orWhereHas('variants', fn ($v) => $v->where('sku', 'like', "%{$q}%"))
-                    ->orWhereHas('brand', fn ($br) => $br->where('name', 'like', "%{$q}%"));
-            })
-            ->orderByDesc('is_featured')
-            ->limit(6)
-            ->get(['id', 'name', 'image', 'price', 'sale_price', 'brand_id', 'vendor_id', 'pricing_type']);
-
-        $brands = Brand::query()->where('name', 'like', "%{$q}%")->limit(5)->get(['id', 'name', 'slug']);
-        $categories = Category::query()->where('is_active', true)->where('name', 'like', "%{$q}%")->limit(5)->get(['id', 'name', 'slug']);
-        $stores = Vendor::query()->where('store_name', 'like', "%{$q}%")->limit(5)->get(['id', 'store_name']);
-
-        return [
-            'suggestions' => $phraseSuggestions,
-            'products' => $products,
-            'brands' => $brands,
-            'categories' => $categories,
-            'stores' => $stores,
-        ];
+        return CatalogCache::remember(
+            'suggestions',
+            ['q' => mb_strtolower($q), 'limit' => $limit],
+            CatalogCache::TTL_SUGGESTIONS,
+            $runner
+        );
     }
 
     public function trendingSearches(int $limit = 10): SupportCollection
     {
-        return SearchQuery::query()
+        $runner = fn () => SearchQuery::query()
             ->orderByDesc('hits')
             ->orderByDesc('last_searched_at')
             ->limit($limit)
             ->get(['query', 'hits']);
+
+        if (! config('catalog_cache.enabled', true)) {
+            return $runner();
+        }
+
+        return CatalogCache::remember(
+            'trending',
+            ['limit' => $limit],
+            CatalogCache::TTL_TRENDING,
+            $runner
+        );
     }
 
     public function similar(Product $product, int $limit = 8): SupportCollection
     {
-        return Product::with(['vendor', 'category', 'brand'])
+        $runner = fn () => Product::with(['vendor', 'category', 'brand'])
             ->where('is_active', true)
             ->where('id', '!=', $product->id)
             ->where(function (Builder $q) use ($product) {
@@ -281,6 +334,17 @@ class CatalogBrowseService
             ->orderByDesc('view_count')
             ->limit($limit)
             ->get();
+
+        if (! config('catalog_cache.enabled', true)) {
+            return $runner();
+        }
+
+        return CatalogCache::remember(
+            'similar',
+            ['id' => $product->id, 'limit' => $limit],
+            CatalogCache::TTL_SIMILAR,
+            $runner
+        );
     }
 
     public function compare(array $ids): array

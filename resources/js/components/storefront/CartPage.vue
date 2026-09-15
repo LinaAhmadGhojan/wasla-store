@@ -200,6 +200,30 @@ function mapServer(item) {
 }
 
 function mapGuest(item) {
+  if (item.type === 'express') {
+    return {
+      key: item.id,
+      source: 'guest',
+      raw: item,
+      name: item.product_name || 'طبق',
+      image: item.image || null,
+      href: item.express_item_id ? `/express/items/${item.express_item_id}` : '/express',
+      meta: item.option_label
+        ? `وصلة السريعة · ${item.store_name || ''} · ${item.option_label}`.replace(/\s·\s$/, '')
+        : (item.store_name ? `وصلة السريعة · ${item.store_name}` : 'وصلة السريعة'),
+      unitPrice: Number(item.unit_price || 0),
+      pricingKind: 'product',
+      quantity: item.quantity,
+      updating: false,
+      group: item.store_name ? `🍽 ${item.store_name}` : '🍽 وصلة السريعة',
+      placeholder: '🍽️',
+      variants: [],
+      outOfStock: false,
+      lowStock: false,
+      priceChanged: false,
+    };
+  }
+
   return {
     key: item.id,
     source: 'guest',
@@ -503,6 +527,9 @@ onMounted(loadCart);
 .order-summary {
   background: white; border-radius: 1.25rem; border: 1px solid rgba(15, 90, 107, 0.08);
   padding: 1.5rem; position: sticky; top: 5.5rem;
+  box-sizing: border-box;
+  min-width: 0;
+  max-width: 100%;
 }
 .order-summary h2 { margin-top: 0; font-size: 1.1rem; }
 .coupon-box { margin-bottom: 1rem; }
@@ -516,10 +543,29 @@ onMounted(loadCart);
 .summary-row { display: flex; justify-content: space-between; font-size: 0.9rem; color: #4d6b72; margin-bottom: 0.75rem; }
 .summary-row.discount { color: #c62828; font-weight: 700; }
 .total-row { font-weight: 800; color: #132f37; font-size: 1.1rem; border-top: 1px solid #eef4f5; padding-top: 0.75rem; }
-.checkout-btn { width: 100%; margin-top: 1rem; padding: 0.9rem; display: block; text-align: center; text-decoration: none; background: #1c7282; color: white; border-radius: 0.85rem; font-weight: 700; }
+.checkout-btn {
+  width: 100%;
+  max-width: 100%;
+  margin-top: 1rem;
+  padding: 0.9rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  text-decoration: none;
+  background: #1c7282;
+  color: white;
+  border-radius: 0.85rem;
+  font-weight: 700;
+  box-sizing: border-box;
+}
 .checkout-btn.disabled { opacity: .5; pointer-events: none; }
 .login-hint { margin: 0.75rem 0 0; font-size: 0.8rem; color: #4d6b72; text-align: center; }
-.btn-primary { background: #1c7282; color: white; padding: 0.85rem 1.25rem; border-radius: 0.85rem; text-decoration: none; font-weight: 700; border: 0; cursor: pointer; }
+.btn-primary {
+  background: #1c7282; color: white; padding: 0.85rem 1.25rem; border-radius: 0.85rem;
+  text-decoration: none; font-weight: 700; border: 0; cursor: pointer;
+  box-sizing: border-box; max-width: 100%;
+}
 .btn-secondary { background: #e8f2f4; color: #0b3d44; border: 0; border-radius: .65rem; padding: .5rem .75rem; font-weight: 800; cursor: pointer; }
 .btn-ghost { background: transparent; border: 1.5px solid rgba(28,114,130,.25); color: #1c7282; border-radius: .65rem; padding: .45rem .7rem; font-weight: 800; cursor: pointer; }
 .sm { font-size: .82rem; padding: .4rem .65rem; }

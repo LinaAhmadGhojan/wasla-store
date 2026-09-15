@@ -27,6 +27,7 @@ class AuthController extends Controller
             'phone' => 'nullable|string|max:30',
             'locale' => 'nullable|in:ar,en',
             'preferred_currency' => 'nullable|in:SYP,AED,USD',
+            'preferred_channel' => 'nullable|in:store,express,both',
         ]);
 
         if ($validator->fails()) {
@@ -46,6 +47,7 @@ class AuthController extends Controller
             'email_verified_at' => null,
             'locale' => $request->input('locale', 'ar'),
             'preferred_currency' => $request->input('preferred_currency', 'SYP'),
+            'preferred_channel' => $request->input('preferred_channel', 'both'),
             'privacy_settings' => $this->accounts->defaultPrivacy(),
         ]);
 
@@ -189,6 +191,7 @@ class AuthController extends Controller
             'email' => 'required|email|max:255|unique:users,email,'.$user->id,
             'locale' => 'nullable|in:ar,en',
             'preferred_currency' => 'nullable|in:SYP,AED,USD',
+            'preferred_channel' => 'nullable|in:store,express,both',
             'privacy_settings' => 'nullable|array',
         ]);
 
@@ -208,6 +211,9 @@ class AuthController extends Controller
         }
         if (array_key_exists('preferred_currency', $data) && $data['preferred_currency']) {
             $user->preferred_currency = $data['preferred_currency'];
+        }
+        if (array_key_exists('preferred_channel', $data) && $data['preferred_channel']) {
+            $user->preferred_channel = $data['preferred_channel'];
         }
         if (isset($data['privacy_settings'])) {
             $user->privacy_settings = array_merge(
@@ -268,6 +274,7 @@ class AuthController extends Controller
         $data = $request->validate([
             'locale' => 'nullable|in:ar,en',
             'preferred_currency' => 'nullable|in:SYP,AED,USD',
+            'preferred_channel' => 'nullable|in:store,express,both',
             'privacy_settings' => 'nullable|array',
         ]);
 
@@ -277,6 +284,9 @@ class AuthController extends Controller
         }
         if (! empty($data['preferred_currency'])) {
             $user->preferred_currency = $data['preferred_currency'];
+        }
+        if (! empty($data['preferred_channel'])) {
+            $user->preferred_channel = $data['preferred_channel'];
         }
         if (isset($data['privacy_settings'])) {
             $user->privacy_settings = array_merge(

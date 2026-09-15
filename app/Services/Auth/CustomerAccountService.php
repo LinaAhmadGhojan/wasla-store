@@ -41,6 +41,7 @@ class CustomerAccountService
             'avatar_path' => $user->avatar,
             'locale' => $user->locale ?: 'ar',
             'preferred_currency' => $user->preferred_currency ?: 'SYP',
+            'preferred_channel' => $user->preferred_channel ?: 'both',
             'privacy_settings' => $privacy,
             'store_credit_syp' => (int) $user->store_credit_syp,
             'is_active' => (bool) $user->is_active,

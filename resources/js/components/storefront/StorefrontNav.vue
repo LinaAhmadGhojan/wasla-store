@@ -1,5 +1,5 @@
 <template>
-  <header class="storefront-nav" dir="rtl">
+  <header class="storefront-nav" :class="{ 'theme-express': theme === 'express' }" dir="rtl">
     <div class="nav-top">
       <a href="/" class="brand" aria-label="وصلة — تسوق شي إن في سوريا">
         <img :src="logoUrl" alt="وصلة WASLA — توصيل شي إن لسوريا" class="brand-logo" />
@@ -32,7 +32,7 @@
         </button>
       </div>
 
-      <form class="nav-search" action="/shop" method="get">
+      <form v-if="!hideSearch" class="nav-search" action="/shop" method="get">
         <a
           v-if="initialQuery"
           href="/shop"
@@ -57,6 +57,7 @@
       >
         <p class="menu-title mobile-only">روابط سريعة</p>
         <a href="/shop" @click="closeMenu">تصفح المنتجات</a>
+        <a href="/express" @click="closeMenu">وصلة السريعة</a>
         <a href="/browse" @click="closeMenu">تسوق شي إن والعالمي</a>
         <a href="/buy-from-anywhere" @click="closeMenu">لصق رابط منتج</a>
         <a href="/compare" @click="closeMenu">مقارنة</a>
@@ -90,6 +91,18 @@
 <script setup>
 import { onMounted, onBeforeUnmount, ref } from 'vue';
 import { store, hydrateUser, refreshCartCount, logout } from '../../storefront/store';
+
+defineProps({
+  theme: {
+    type: String,
+    default: 'store',
+    validator: (v) => ['store', 'express'].includes(v),
+  },
+  hideSearch: {
+    type: Boolean,
+    default: false,
+  },
+});
 
 const params = new URLSearchParams(window.location.search);
 const initialQuery = params.get('q') || '';
@@ -310,6 +323,18 @@ async function onLogout() {
 .mobile-only { display: none !important; }
 .desktop-inline { display: inline-flex !important; }
 
+/* وصلة السريعة — ثيم بني */
+.storefront-nav.theme-express {
+  background: #8a4b12;
+  border-bottom-color: #5c3210;
+  box-shadow: 0 2px 0 rgba(255, 255, 255, 0.1), 0 6px 18px rgba(92, 50, 16, 0.28);
+}
+.theme-express .nav-clear-search { color: #8a4b12; }
+.theme-express .cart-pill { color: #5c3210 !important; }
+.theme-express .cart-pill:hover { color: #3d2817 !important; }
+.theme-express .cart-ico { color: #8a4b12; }
+.theme-express .btn-login { color: #8a4b12 !important; }
+
 @media (max-width: 860px) {
   .nav-top {
     flex-wrap: wrap;
@@ -325,6 +350,9 @@ async function onLogout() {
     order: 3;
     max-width: 100%;
     flex-basis: 100%;
+  }
+  .storefront-nav:not(:has(.nav-search)) .nav-top {
+    flex-wrap: nowrap;
   }
   .nav-links {
     display: none;
@@ -365,5 +393,12 @@ async function onLogout() {
     padding: 0.45rem 0.8rem;
   }
   .cart-label { font-size: 0.84rem; }
+
+  .theme-express .nav-links {
+    background: #5c3210;
+    box-shadow: 0 18px 40px rgba(61, 40, 23, 0.4);
+  }
+  .theme-express .menu-title { color: #e8c9a0; }
+  .theme-express .menu-backdrop { background: rgba(61, 40, 23, 0.4); }
 }
 </style>

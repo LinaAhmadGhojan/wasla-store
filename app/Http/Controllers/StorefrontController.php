@@ -9,6 +9,21 @@ class StorefrontController extends Controller
         return view('storefront.shop');
     }
 
+    public function express()
+    {
+        return view('storefront.express');
+    }
+
+    public function expressStoreShow($store)
+    {
+        return view('storefront.express-store', ['storeId' => $store]);
+    }
+
+    public function expressItemShow($item)
+    {
+        return view('storefront.express-item', ['itemId' => $item]);
+    }
+
     public function compare()
     {
         return view('storefront.compare');

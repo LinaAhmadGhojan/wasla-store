@@ -22,6 +22,7 @@ class DatabaseSeeder extends Seeder
             ExchangeRateSeeder::class,
             WhatsappBroadcastSeeder::class,
             SheinCatalogSeeder::class,
+            ExpressSeeder::class,
         ]);
     }
 }

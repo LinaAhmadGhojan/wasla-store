@@ -20,6 +20,25 @@
             <label>الهاتف (اختياري)</label>
             <input v-model="form.phone" type="text" autocomplete="tel" />
 
+            <label>وين بدك تبدي؟</label>
+            <div class="channel-picks" role="radiogroup" aria-label="نوع الحساب">
+              <label class="channel-pick" :class="{ on: form.preferred_channel === 'store' }">
+                <input v-model="form.preferred_channel" type="radio" value="store" />
+                <strong>وصلة</strong>
+                <span>موضة وتسوق عام</span>
+              </label>
+              <label class="channel-pick" :class="{ on: form.preferred_channel === 'express' }">
+                <input v-model="form.preferred_channel" type="radio" value="express" />
+                <strong>وصلة السريعة</strong>
+                <span>مطاعم وتوصيل قريب</span>
+              </label>
+              <label class="channel-pick" :class="{ on: form.preferred_channel === 'both' }">
+                <input v-model="form.preferred_channel" type="radio" value="both" />
+                <strong>الاثنين</strong>
+                <span>أقدر أتنقل بينهم</span>
+              </label>
+            </div>
+
             <label>كلمة المرور</label>
             <input v-model="form.password" type="password" required autocomplete="new-password" minlength="8" />
 
@@ -78,6 +97,7 @@
 <script setup>
 import { ref } from 'vue';
 import api from '../../storefront/api';
+import { homeForChannel, rememberChannel } from '../../storefront/channel';
 import { login } from '../../storefront/store';
 import StorefrontNav from './StorefrontNav.vue';
 import StorefrontFooter from './StorefrontFooter.vue';
@@ -88,7 +108,14 @@ const redirectTo = params.get('redirect') || '/';
 const loginHref = `/login?redirect=${encodeURIComponent(redirectTo)}`;
 
 const step = ref('form');
-const form = ref({ name: '', email: '', phone: '', password: '', password_confirmation: '' });
+const form = ref({
+  name: '',
+  email: '',
+  phone: '',
+  password: '',
+  password_confirmation: '',
+  preferred_channel: 'both',
+});
 const pendingEmail = ref('');
 const otpCode = ref('');
 const devCode = ref('');
@@ -125,7 +152,9 @@ async function onVerify() {
       code: otpCode.value,
     });
     login(data.token, data.user);
-    window.location.href = redirectTo;
+    const ch = data.user?.preferred_channel || form.value.preferred_channel;
+    if (ch === 'express' || ch === 'store') rememberChannel(ch);
+    window.location.href = homeForChannel(data.user, redirectTo);
   } catch (e) {
     error.value = e?.response?.data?.errors
       ? Object.values(e.response.data.errors).flat().join(' ')
@@ -178,6 +207,29 @@ async function onResend() {
 .auth-card h1 { margin: 0 0 0.35rem; color: #006871; font-size: 1.55rem; }
 .auth-subtitle { margin: 0 0 1.5rem; color: #4d6b72; }
 .auth-subtitle strong { color: #006871; }
+.channel-picks {
+  display: grid;
+  gap: 0.45rem;
+  margin: 0.35rem 0 0.75rem;
+  text-align: right;
+}
+.channel-pick {
+  display: grid;
+  gap: 0.1rem;
+  padding: 0.7rem 0.85rem;
+  border: 1.5px solid rgba(28,114,130,.2);
+  border-radius: 0.85rem;
+  cursor: pointer;
+  background: #fff;
+}
+.channel-pick input { position: absolute; opacity: 0; pointer-events: none; }
+.channel-pick strong { color: #006871; font-size: 0.95rem; }
+.channel-pick span { color: #6a8590; font-size: 0.78rem; }
+.channel-pick.on {
+  border-color: #006871;
+  background: #eef8fa;
+  box-shadow: 0 0 0 1px #006871 inset;
+}
 form { text-align: right; display: flex; flex-direction: column; }
 label {
   font-weight: 700;

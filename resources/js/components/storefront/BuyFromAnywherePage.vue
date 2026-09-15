@@ -27,7 +27,7 @@
       <form class="buy-form" @submit.prevent="previewProduct">
         <label>
           رابط المنتج
-          <input v-model="url" type="url" required placeholder="https://..." />
+          <input ref="urlInputEl" v-model="url" type="url" required placeholder="https://..." />
         </label>
         <button type="submit" class="btn btn-primary" :disabled="previewing">
           {{ previewing ? 'جاري المعاينة...' : 'معاينة المنتج' }}
@@ -93,6 +93,7 @@ import StorefrontFooter from './StorefrontFooter.vue';
 const platforms = ref([]);
 const selectedPlatformId = ref(null);
 const url = ref('');
+const urlInputEl = ref(null);
 const previewing = ref(false);
 const preview = ref(null);
 const adding = ref(false);
@@ -107,7 +108,13 @@ async function loadPlatforms() {
   try {
     const { data } = await api.get('/v1/external-platforms');
     platforms.value = data;
-    if (data.length) selectedPlatformId.value = data[0].id;
+    const params = new URLSearchParams(window.location.search);
+    const platformSlug = (params.get('platform') || '').toLowerCase();
+    const matched = platformSlug
+      ? data.find((p) => (p.slug || '').toLowerCase() === platformSlug)
+      : null;
+    if (matched) selectedPlatformId.value = matched.id;
+    else if (data.length) selectedPlatformId.value = data[0].id;
   } catch (e) {
     platforms.value = [];
   }
@@ -168,13 +175,15 @@ async function addToCart() {
   }
 }
 
-onMounted(() => {
-  loadPlatforms();
+onMounted(async () => {
+  await loadPlatforms();
   const params = new URLSearchParams(window.location.search);
   const prefill = params.get('url');
   if (prefill) {
     url.value = prefill;
     previewProduct();
+  } else {
+    requestAnimationFrame(() => urlInputEl.value?.focus());
   }
 });
 </script>

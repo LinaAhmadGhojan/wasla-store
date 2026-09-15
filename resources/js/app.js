@@ -62,6 +62,27 @@ if (shopElement) {
     createApp(ShopPage).mount(shopElement);
 }
 
+const expressElement = document.querySelector('wasla-express');
+if (expressElement) {
+    import('./components/storefront/ExpressPage.vue').then(({ default: ExpressPage }) => {
+        createApp(ExpressPage).mount(expressElement);
+    });
+}
+
+const expressItemElement = document.querySelector('wasla-express-item');
+if (expressItemElement) {
+    import('./components/storefront/ExpressItemPage.vue').then(({ default: ExpressItemPage }) => {
+        createApp(ExpressItemPage, { itemId: expressItemElement.dataset.itemId }).mount(expressItemElement);
+    });
+}
+
+const expressStoreElement = document.querySelector('wasla-express-store');
+if (expressStoreElement) {
+    import('./components/storefront/ExpressStorePage.vue').then(({ default: ExpressStorePage }) => {
+        createApp(ExpressStorePage, { storeId: expressStoreElement.dataset.storeId }).mount(expressStoreElement);
+    });
+}
+
 if (productElement) {
     createApp(ProductPage, { productId: productElement.dataset.productId }).mount(productElement);
 }

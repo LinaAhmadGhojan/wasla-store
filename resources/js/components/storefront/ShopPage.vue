@@ -1,93 +1,115 @@
 <template>
   <div class="shop-page" dir="rtl">
-    <StorefrontNav />
+    <StorefrontNav theme="store" :hide-search="true" />
 
     <div class="catalog-shell">
-      <header class="catalog-hero">
-        <h1>تصفح المنتجات</h1>
-        <p>وصلة — شي إن SHEIN والتسوق العالمي مع توصيل لسوريا: دمشق وباقي المحافظات. بحث متقدم، فلاتر، ومقارنة بين المنتجات.</p>
-      </header>
+      <div class="mode-switch" role="tablist" aria-label="اختر نوع التسوق">
+        <a href="/shop" class="mode-btn on" role="tab" aria-selected="true" @click="rememberChannel('store')">متجر وصلة</a>
+        <a href="/express" class="mode-btn mode-express" role="tab" aria-selected="false" @click="rememberChannel('express')">وصلة السريعة</a>
+      </div>
+      <p class="mode-hint">منتجات وصلة + شي إن والمتاجر العالمية</p>
 
-      <!-- Advanced search -->
+      <!-- بحث مضغوط + منصات عالمية -->
       <div class="search-panel" @keydown.escape="closeSuggest">
-        <form class="search-main" @submit.prevent="runSearch">
-          <button
-            v-if="hasActiveSearch"
-            type="button"
-            class="clear-search"
-            title="مسح البحث والرجوع لكل المنتجات"
-            aria-label="مسح البحث والرجوع لكل المنتجات"
-            @click="clearSearch"
-          >
-            <span class="clear-arrow" aria-hidden="true">←</span>
-            <span class="clear-text">رجوع</span>
-          </button>
-          <input
-            ref="searchInputEl"
-            v-model="searchInput"
-            type="search"
-            placeholder="ابحثي بالاسم، SKU، البراند، المتجر، التصنيف…"
-            autocomplete="off"
-            @input="onSearchInput"
-            @focus="showSuggest = true"
-            @search="onNativeSearchClear"
-          />
-          <button
-            v-if="searchInput || filters.q"
-            type="button"
-            class="clear-x"
-            title="حذف نص البحث"
-            aria-label="حذف نص البحث"
-            @click="clearSearch"
-          >×</button>
-          <button type="button" class="icon-btn" title="بحث صوتي" @click="startVoice" :disabled="voiceBusy">
-            {{ voiceBusy ? '…' : 'Voice' }}
-          </button>
-          <button type="button" class="icon-btn" title="بحث بالصورة" @click="triggerImagePick">صورة</button>
-          <button type="submit" class="go">بحث</button>
-        </form>
+        <div class="search-wrap">
+          <form class="search-main" @submit.prevent="runSearch">
+            <button
+              v-if="hasActiveSearch"
+              type="button"
+              class="clear-search"
+              title="مسح البحث والرجوع"
+              aria-label="مسح البحث والرجوع"
+              @click="clearSearch"
+            >←</button>
+            <input
+              ref="searchInputEl"
+              v-model="searchInput"
+              type="search"
+              placeholder="ابحثي في منتجات وصلة…"
+              autocomplete="off"
+              @input="onSearchInput"
+              @focus="showSuggest = true"
+              @search="onNativeSearchClear"
+            />
+            <button
+              v-if="searchInput || filters.q"
+              type="button"
+              class="clear-x"
+              title="حذف النص"
+              aria-label="حذف النص"
+              @click="clearSearch"
+            >×</button>
+            <div class="search-actions">
+              <button type="button" class="bar-icon" title="بحث بالصورة" aria-label="بحث بالصورة" @click="triggerImagePick">
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="M4 7h3l2-2h6l2 2h3v12H4z"/>
+                  <circle cx="12" cy="13" r="3.5"/>
+                </svg>
+              </button>
+              <button type="submit" class="bar-icon bar-search" title="بحث" aria-label="بحث">
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <circle cx="11" cy="11" r="6.5"/>
+                  <path d="M16.5 16.5L21 21"/>
+                </svg>
+              </button>
+            </div>
+          </form>
+
+          <div v-if="showSuggest" class="suggest-box">
+            <div v-if="suggestions.suggestions?.length" class="suggest-block">
+              <h4>اقتراحات</h4>
+              <button
+                v-for="s in suggestions.suggestions"
+                :key="s"
+                type="button"
+                class="suggest-row"
+                @click="pickSuggestion(s)"
+              >{{ s }}</button>
+            </div>
+            <div v-if="recentSearches.length" class="suggest-block">
+              <div class="suggest-head">
+                <h4>عمليات بحث أخيرة</h4>
+                <button type="button" class="linkish" @click="clearRecent">حذف الكل</button>
+              </div>
+              <div v-for="r in recentSearches" :key="r" class="suggest-row between">
+                <button type="button" @click="pickSuggestion(r)">{{ r }}</button>
+                <button type="button" class="x" @click.stop="removeRecent(r)">×</button>
+              </div>
+            </div>
+            <div v-if="trending.length" class="suggest-block">
+              <h4>الأكثر بحثاً</h4>
+              <button
+                v-for="t in trending"
+                :key="t.query"
+                type="button"
+                class="suggest-row"
+                @click="pickSuggestion(t.query)"
+              >{{ t.query }} <span class="hits">{{ t.hits }}</span></button>
+            </div>
+            <div v-if="suggestions.products?.length" class="suggest-block">
+              <h4>منتجات</h4>
+              <a
+                v-for="p in suggestions.products"
+                :key="p.id"
+                class="suggest-row"
+                :href="`/products/${p.id}`"
+              >{{ p.name }}</a>
+            </div>
+          </div>
+        </div>
         <input ref="imageInputRef" type="file" accept="image/*" class="sr-only" @change="onImagePicked" />
 
-        <div v-if="showSuggest" class="suggest-box">
-          <div v-if="suggestions.suggestions?.length" class="suggest-block">
-            <h4>اقتراحات</h4>
-            <button
-              v-for="s in suggestions.suggestions"
-              :key="s"
-              type="button"
-              class="suggest-row"
-              @click="pickSuggestion(s)"
-            >{{ s }}</button>
-          </div>
-          <div v-if="recentSearches.length" class="suggest-block">
-            <div class="suggest-head">
-              <h4>عمليات بحث أخيرة</h4>
-              <button type="button" class="linkish" @click="clearRecent">حذف الكل</button>
-            </div>
-            <div v-for="r in recentSearches" :key="r" class="suggest-row between">
-              <button type="button" @click="pickSuggestion(r)">{{ r }}</button>
-              <button type="button" class="x" @click.stop="removeRecent(r)">×</button>
-            </div>
-          </div>
-          <div v-if="trending.length" class="suggest-block">
-            <h4>الأكثر بحثاً</h4>
-            <button
-              v-for="t in trending"
-              :key="t.query"
-              type="button"
-              class="suggest-row"
-              @click="pickSuggestion(t.query)"
-            >{{ t.query }} <span class="hits">{{ t.hits }}</span></button>
-          </div>
-          <div v-if="suggestions.products?.length" class="suggest-block">
-            <h4>منتجات</h4>
-            <a
-              v-for="p in suggestions.products"
-              :key="p.id"
-              class="suggest-row"
-              :href="`/products/${p.id}`"
-            >{{ p.name }}</a>
-          </div>
+        <div class="partner-strip" aria-label="الصقي رابط من متجر عالمي">
+          <span class="partner-label">لصق رابط من</span>
+          <a
+            v-for="p in partnerPlatforms"
+            :key="p.slug"
+            :href="p.href"
+            class="partner"
+            :title="'لصق رابط منتج من ' + p.name"
+          >
+            <img :src="p.logo" :alt="p.name" width="64" height="20" loading="lazy" />
+          </a>
         </div>
       </div>
 
@@ -347,9 +369,12 @@
 <script setup>
 import { computed, onMounted, onBeforeUnmount, reactive, ref, watch } from 'vue';
 import api from '../../storefront/api';
+import { rememberChannel } from '../../storefront/channel';
 import StorefrontNav from './StorefrontNav.vue';
 import StorefrontFooter from './StorefrontFooter.vue';
 import ProductCard from './ProductCard.vue';
+
+rememberChannel('store');
 import {
   getRecentSearches, pushRecentSearch, removeRecentSearch, clearRecentSearches,
 } from '../../storefront/searchHistory';
@@ -378,6 +403,14 @@ const defaultSorts = {
   trending: 'الرائج',
 };
 
+const partnerPlatforms = [
+  { slug: 'shein', name: 'SHEIN', logo: '/images/platforms/shein.svg', href: '/buy-from-anywhere?platform=shein' },
+  { slug: 'amazon', name: 'Amazon', logo: '/images/platforms/amazon.svg', href: '/buy-from-anywhere?platform=amazon' },
+  { slug: 'noon', name: 'Noon', logo: '/images/platforms/noon.svg', href: '/buy-from-anywhere?platform=noon' },
+  { slug: 'temu', name: 'Temu', logo: '/images/platforms/temu.svg', href: '/buy-from-anywhere?platform=temu' },
+  { slug: 'trendyol', name: 'Trendyol', logo: '/images/platforms/trendyol.svg', href: '/buy-from-anywhere?platform=trendyol' },
+];
+
 const products = ref([]);
 const facets = ref({});
 const meta = ref({ total: 0, last_page: 1 });
@@ -389,7 +422,6 @@ const showSuggest = ref(false);
 const suggestions = ref({ suggestions: [], products: [] });
 const recentSearches = ref(getRecentSearches());
 const trending = ref([]);
-const voiceBusy = ref(false);
 const searchInputEl = ref(null);
 const imageInputRef = ref(null);
 const imageSearching = ref(false);
@@ -463,13 +495,15 @@ function closeFilters() {
   filtersOpen.value = false;
 }
 
-function onFiltersKeydown(e) {
-  if (e.key === 'Escape') closeFilters();
-}
-
 watch(filtersOpen, (open) => {
   document.body.style.overflow = open ? 'hidden' : '';
 });
+
+function onFiltersKeydown(e) {
+  if (e.key === 'Escape') {
+    closeFilters();
+  }
+}
 
 function showFilter(key) {
   const available = facets.value.available_filters;
@@ -636,26 +670,6 @@ function closeSuggest() {
   showSuggest.value = false;
 }
 
-function startVoice() {
-  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
-  if (!SR) {
-    alert('البحث الصوتي غير مدعوم بهذا المتصفح.');
-    return;
-  }
-  const rec = new SR();
-  rec.lang = 'ar-SY';
-  voiceBusy.value = true;
-  rec.onresult = (e) => {
-    const text = e.results?.[0]?.[0]?.transcript || '';
-    searchInput.value = text;
-    voiceBusy.value = false;
-    runSearch();
-  };
-  rec.onerror = () => { voiceBusy.value = false; };
-  rec.onend = () => { voiceBusy.value = false; };
-  rec.start();
-}
-
 function triggerImagePick() {
   imageInputRef.value?.click();
 }
@@ -724,58 +738,188 @@ onBeforeUnmount(() => {
 <style scoped>
 .shop-page { min-height: 100vh; background: linear-gradient(180deg, #eaf6f8, #f7fbfc 30%, #fff); color: #132f37; }
 .catalog-shell { max-width: 1200px; margin: 0 auto; padding: 1.5rem 1.25rem 5rem; }
-.catalog-hero h1 { margin: 0; color: #0b3d44; font-size: 1.7rem; }
-.catalog-hero p { margin: .35rem 0 1rem; color: #4d6b72; }
-.search-panel { position: relative; margin-bottom: 1rem; }
-.search-main {
-  display: flex; gap: .4rem; background: #fff; border-radius: 999px;
-  border: 1.5px solid rgba(28,114,130,.2); padding: .35rem;
-  box-shadow: 0 10px 28px rgba(19,47,55,.05);
-  align-items: center;
+.catalog-hero { margin-bottom: 0.75rem; }
+.mode-switch {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.45rem;
+  margin-bottom: 0.35rem;
 }
-.search-main input {
-  flex: 1; border: 0; outline: none; padding: .7rem 1rem; background: transparent; font: inherit; min-width: 0;
-}
-.clear-search {
+.mode-btn {
+  border: 1.5px solid rgba(28, 114, 130, 0.22);
+  background: #fff;
+  color: #0b3d44;
+  border-radius: 999px;
+  padding: 0.55rem 0.85rem;
+  cursor: pointer;
+  font-weight: 900;
+  font-size: 0.9rem;
+  box-shadow: 0 4px 14px rgba(19, 47, 55, 0.04);
+  text-decoration: none;
+  text-align: center;
   display: inline-flex;
   align-items: center;
-  gap: .25rem;
+  justify-content: center;
+}
+.mode-btn.on {
+  background: #1c7282;
+  border-color: #1c7282;
+  color: #fff;
+  box-shadow: 0 8px 18px rgba(28, 114, 130, 0.22);
+}
+.mode-btn.mode-express.on {
+  background: #8a4b12;
+  border-color: #8a4b12;
+  color: #fff7ea;
+  box-shadow: 0 8px 18px rgba(138, 75, 18, 0.22);
+}
+.mode-hint {
+  margin: 0 0 0.55rem;
+  color: #6a8288;
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+.search-panel { position: relative; margin-bottom: 0.55rem; }
+.search-wrap { position: relative; }
+.search-main {
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: center;
+  gap: 0.15rem;
+  background: #fff;
+  border-radius: 999px;
+  border: 1.5px solid rgba(28,114,130,.18);
+  padding: 0.15rem 0.2rem 0.15rem 0.2rem;
+  box-shadow: 0 4px 12px rgba(19,47,55,.04);
+  height: 2.45rem;
+  min-height: 2.45rem;
+  max-height: 2.45rem;
+  box-sizing: border-box;
+}
+.search-main input {
+  flex: 1 1 auto;
+  width: 0;
+  min-width: 0;
+  height: 100%;
+  border: 0;
+  outline: none;
+  padding: 0 0.55rem;
+  margin: 0;
+  background: transparent;
+  font: inherit;
+  font-size: 0.88rem;
+  line-height: 1.2;
+  color: #132f37;
+  -webkit-appearance: none;
+  appearance: none;
+}
+.search-main input::-webkit-search-decoration,
+.search-main input::-webkit-search-cancel-button,
+.search-main input::-webkit-search-results-button,
+.search-main input::-webkit-search-results-decoration {
+  display: none;
+}
+.search-actions {
+  display: inline-flex;
+  flex: 0 0 auto;
+  align-items: center;
+  gap: 0.1rem;
+}
+.clear-search {
   flex-shrink: 0;
+  width: 1.75rem;
+  height: 1.75rem;
   border: 0;
   border-radius: 999px;
   background: #eef7f8;
   color: #0b3d44;
   font-weight: 900;
-  padding: .5rem .75rem;
   cursor: pointer;
-  font-size: .85rem;
-}
-.clear-search:hover { background: #d8eef1; }
-.clear-arrow {
-  display: inline-flex;
-  font-size: 1.05rem;
+  font-size: 0.95rem;
   line-height: 1;
-  font-weight: 900;
 }
 .clear-x {
   flex-shrink: 0;
-  width: 2rem;
-  height: 2rem;
+  width: 1.5rem;
+  height: 1.5rem;
   border: 0;
   border-radius: 999px;
-  background: #f0f4f5;
-  color: #132f37;
-  font-size: 1.25rem;
+  background: transparent;
+  color: #6a8288;
+  font-size: 1.05rem;
   font-weight: 800;
   line-height: 1;
   cursor: pointer;
 }
-.clear-x:hover { background: #e4ecee; }
-.icon-btn, .go {
-  border: 0; border-radius: 999px; padding: .55rem .9rem; font-weight: 800; cursor: pointer;
+.bar-icon {
+  flex-shrink: 0;
+  width: 1.9rem;
+  height: 1.9rem;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  color: #1c7282;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  padding: 0;
 }
-.icon-btn { background: #eef7f8; color: #1c7282; }
-.go { background: #1c7282; color: #fff; }
+.bar-icon:hover { background: #eef7f8; }
+.bar-search {
+  background: #1c7282;
+  color: #fff;
+}
+.bar-search:hover { background: #155a66; color: #fff; }
+.partner-strip {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  padding: 0.35rem 0.1rem 0;
+  margin: 0;
+  scrollbar-width: none;
+}
+.partner-strip::-webkit-scrollbar { display: none; }
+.partner-label {
+  flex: 0 0 auto;
+  font-size: 0.7rem;
+  font-weight: 800;
+  color: #7a9197;
+  white-space: nowrap;
+  letter-spacing: 0.01em;
+}
+.partner {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 1.45rem;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+  border-radius: 0;
+  text-decoration: none;
+  opacity: 0.88;
+  transition: opacity 0.15s ease, transform 0.15s ease;
+}
+.partner:hover,
+.partner:focus-visible {
+  opacity: 1;
+  transform: translateY(-1px);
+  outline: none;
+}
+.partner img {
+  display: block;
+  width: auto;
+  height: 1.2rem;
+  max-width: 4.6rem;
+  object-fit: contain;
+}
+
 .suggest-box {
   position: absolute; inset-inline: 0; top: calc(100% + .4rem); z-index: 20;
   background: #fff; border-radius: 1rem; border: 1px solid rgba(28,114,130,.15);
@@ -963,30 +1107,20 @@ onBeforeUnmount(() => {
 .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0,0,0,0); }
 @media (max-width: 900px) {
   .catalog-shell { padding: 1rem 0.85rem 4.5rem; }
-  .catalog-hero h1 { font-size: 1.35rem; }
-  .catalog-hero p { font-size: 0.92rem; }
+  .mode-btn { padding: 0.65rem 0.75rem; font-size: 0.88rem; }
+  .partner img { height: 1.05rem; max-width: 3.8rem; }
+  .partner-strip { gap: 0.45rem; padding-top: 0.3rem; }
   .search-main {
-    flex-wrap: wrap;
-    border-radius: 1rem;
-    padding: 0.45rem;
+    height: 2.35rem;
+    min-height: 2.35rem;
+    max-height: 2.35rem;
+    padding: 0.12rem 0.15rem;
   }
   .search-main input {
-    flex: 1 1 calc(100% - 3rem);
-    padding: 0.65rem 0.75rem;
-    order: 2;
+    padding: 0 0.45rem;
+    font-size: 0.84rem;
   }
-  .clear-search {
-    order: 1;
-    flex: 1 1 auto;
-    justify-content: center;
-    min-height: 2.6rem;
-  }
-  .clear-x { order: 2; }
-  .icon-btn, .go {
-    flex: 1 1 auto;
-    min-height: 2.6rem;
-    order: 3;
-  }
+  .bar-icon { width: 1.8rem; height: 1.8rem; }
   .section-chips {
     flex-wrap: nowrap;
     overflow-x: auto;

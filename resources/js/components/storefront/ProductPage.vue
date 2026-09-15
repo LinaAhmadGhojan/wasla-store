@@ -1206,6 +1206,7 @@ onMounted(() => {
 }
 .add-to-cart {
   width: 100%;
+  max-width: 100%;
   min-height: 52px;
   height: auto;
   padding: 0.75rem 1.25rem;
@@ -1218,7 +1219,8 @@ onMounted(() => {
   line-height: 1.3;
   cursor: pointer;
   white-space: normal;
-  overflow: visible;
+  overflow: hidden;
+  box-sizing: border-box;
 }
 .add-to-cart:disabled { opacity: 0.55; cursor: not-allowed; }
 .feedback {

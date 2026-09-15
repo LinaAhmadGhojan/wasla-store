@@ -1,5 +1,5 @@
 <template>
-  <footer class="storefront-footer" dir="rtl">
+  <footer class="storefront-footer" :class="{ 'theme-express': theme === 'express' }" dir="rtl">
     <div class="footer-inner">
       <div class="footer-brand">
         <img :src="markUrl" alt="وصلة" class="footer-logo" />
@@ -11,6 +11,7 @@
       <div class="footer-links">
         <a href="/">الرئيسية</a>
         <a href="/shop">المتجر</a>
+        <a href="/express">وصلة السريعة</a>
         <a href="/browse">تسوق عالمي</a>
         <a href="/cart">السلة</a>
       </div>
@@ -20,6 +21,14 @@
 </template>
 
 <script setup>
+defineProps({
+  theme: {
+    type: String,
+    default: 'store',
+    validator: (v) => ['store', 'express'].includes(v),
+  },
+});
+
 const markUrl = '/brand/wasla-id-mark.png?v=6';
 const year = new Date().getFullYear();
 </script>
@@ -75,6 +84,23 @@ const year = new Date().getFullYear();
   font-size: 0.8rem;
   width: 100%;
 }
+
+.storefront-footer.theme-express {
+  background: #8a4b12;
+  color: #fff4e4;
+  border-top-color: #5c3210;
+}
+.theme-express .footer-brand p,
+.theme-express .footer-copy {
+  color: #e8c9a0;
+}
+.theme-express .footer-links a {
+  color: #fff4e4;
+}
+.theme-express .footer-links a:hover {
+  color: #ffffff;
+}
+
 @media (max-width: 700px) {
   .footer-inner {
     padding: 1.75rem 1rem 2rem;

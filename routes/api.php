@@ -13,6 +13,8 @@ use App\Http\Controllers\Api\V1\BrandController as V1BrandController;
 use App\Http\Controllers\Api\V1\CatalogController as V1CatalogController;
 use App\Http\Controllers\Api\V1\CouponController as V1CouponController;
 use App\Http\Controllers\Api\V1\CurrencyController as V1CurrencyController;
+use App\Http\Controllers\Api\V1\ExpressController as V1ExpressController;
+use App\Http\Controllers\Api\V1\ExpressSocialController as V1ExpressSocialController;
 use App\Http\Controllers\Api\V1\ExternalCatalogController as V1ExternalCatalogController;
 use App\Http\Controllers\Api\V1\ExternalPlatformController as V1ExternalPlatformController;
 use App\Http\Controllers\Api\V1\ExternalProductController as V1ExternalProductController;
@@ -116,6 +118,15 @@ Route::prefix('v1')->name('api.v1.')->group(function () {
     Route::post('/catalog/compare', [V1CatalogController::class, 'compare']);
     Route::get('/catalog/collections', [V1CatalogController::class, 'collections']);
     Route::get('/catalog/collections/{collection}', [V1CatalogController::class, 'collectionShow']);
+    Route::get('/express', [V1ExpressController::class, 'index']);
+    Route::get('/express/facets', [V1ExpressController::class, 'facets']);
+    Route::get('/express/stores/{store}', [V1ExpressController::class, 'showStore'])->whereNumber('store');
+    Route::get('/express/stores/{store}/follow-status', [V1ExpressSocialController::class, 'followStatus'])->whereNumber('store');
+    Route::get('/express/items/{item}', [V1ExpressController::class, 'showItem'])->whereNumber('item');
+    Route::get('/express/items/{item}/reviews', [V1ExpressSocialController::class, 'reviews'])->whereNumber('item');
+    Route::get('/express/items/{item}/questions', [V1ExpressSocialController::class, 'questions'])->whereNumber('item');
+    Route::get('/express/items/{item}/similar', [V1ExpressSocialController::class, 'similar'])->whereNumber('item');
+    Route::get('/express/items/{item}/favorite-status', [V1ExpressSocialController::class, 'favoriteStatus'])->whereNumber('item');
     Route::get('/coupons/preview', [V1CouponController::class, 'preview']);
     Route::get('/shipping-methods', [V1CouponController::class, 'shippingMethods']);
     Route::get('/products/{product}/similar', [V1CatalogController::class, 'similar']);
@@ -159,6 +170,13 @@ Route::prefix('v1')->name('api.v1.')->group(function () {
         Route::get('/store-follows/feed', [V1StoreFollowController::class, 'feed']);
         Route::post('/stores/{vendor}/follow', [V1StoreFollowController::class, 'follow']);
         Route::delete('/stores/{vendor}/follow', [V1StoreFollowController::class, 'unfollow']);
+
+        Route::post('/express/stores/{store}/follow', [V1ExpressSocialController::class, 'follow'])->whereNumber('store');
+        Route::delete('/express/stores/{store}/follow', [V1ExpressSocialController::class, 'unfollow'])->whereNumber('store');
+        Route::post('/express/items/{item}/reviews', [V1ExpressSocialController::class, 'storeReview'])->whereNumber('item');
+        Route::post('/express/items/{item}/questions', [V1ExpressSocialController::class, 'storeQuestion'])->whereNumber('item');
+        Route::post('/express/items/{item}/favorite', [V1ExpressSocialController::class, 'favorite'])->whereNumber('item');
+        Route::delete('/express/items/{item}/favorite', [V1ExpressSocialController::class, 'unfavorite'])->whereNumber('item');
 
         Route::post('/products/{product}/questions', [V1ProductQuestionController::class, 'store']);
 

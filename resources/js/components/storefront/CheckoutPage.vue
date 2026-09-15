@@ -890,6 +890,7 @@ onMounted(loadData);
   display: inline-flex; align-items: center; justify-content: center;
   border-radius: 999px; padding: .65rem 1.15rem; font-weight: 800;
   cursor: pointer; border: 0; text-decoration: none;
+  box-sizing: border-box; max-width: 100%;
 }
 .btn-primary { background: #1c7282; color: #fff; }
 .btn-secondary { background: #132f37; color: #fff; }
@@ -899,6 +900,9 @@ onMounted(loadData);
   border: 1px solid rgba(15, 90, 107, 0.08);
   padding: 1.5rem; position: sticky; top: 5.5rem;
   box-shadow: 0 12px 30px rgba(19,47,55,.04);
+  box-sizing: border-box;
+  min-width: 0;
+  max-width: 100%;
 }
 .order-summary h2 { margin-top: 0; font-size: 1.1rem; }
 .summary-vendor { margin-bottom: 1rem; font-size: 0.85rem; }
@@ -914,7 +918,14 @@ onMounted(loadData);
   font-weight: 800; color: #132f37; font-size: 1.1rem;
   border-top: 1px solid #eef4f5; padding-top: 0.75rem; margin-top: 0.5rem;
 }
-.place-order-btn { width: 100%; margin-top: 1rem; padding: 0.9rem; }
+.place-order-btn {
+  width: 100%;
+  max-width: 100%;
+  margin-top: 1rem;
+  padding: 0.9rem;
+  box-sizing: border-box;
+  display: flex;
+}
 .place-order-btn:disabled { opacity: 0.5; cursor: not-allowed; }
 .map-hint { margin-top: 1rem; color: #4d6b72; font-size: .9rem; font-weight: 700; text-align: center; }
 .feedback.error { color: #a82626; margin-top: 0.75rem; font-size: 0.85rem; }

@@ -82,6 +82,12 @@
               <option value="AED">درهم (د.إ)</option>
               <option value="USD">دولار (USD)</option>
             </select>
+            <label>الواجهة المفضّلة عند الدخول</label>
+            <select v-model="prefs.preferred_channel">
+              <option value="store">وصلة (المتجر)</option>
+              <option value="express">وصلة السريعة</option>
+              <option value="both">الاثنين</option>
+            </select>
             <button class="btn btn-primary" :disabled="prefSaving">حفظ التفضيلات</button>
             <p v-if="prefMsg" class="ok">{{ prefMsg }}</p>
           </form>
@@ -140,7 +146,7 @@ const pwSaving = ref(false);
 const pwMsg = ref('');
 const pwErr = ref('');
 
-const prefs = ref({ locale: 'ar', preferred_currency: 'SYP' });
+const prefs = ref({ locale: 'ar', preferred_currency: 'SYP', preferred_channel: 'both' });
 const prefSaving = ref(false);
 const prefMsg = ref('');
 
@@ -180,6 +186,7 @@ function applyUser(data) {
   avatarUrl.value = data.avatar || '';
   prefs.value.locale = data.locale || 'ar';
   prefs.value.preferred_currency = data.preferred_currency || 'SYP';
+  prefs.value.preferred_channel = data.preferred_channel || 'both';
   privacy.value = { ...privacy.value, ...(data.privacy_settings || {}) };
   try {
     localStorage.setItem('wasla_locale', prefs.value.locale);
@@ -265,7 +272,7 @@ async function savePrefs() {
   try {
     const { data } = await api.put('/auth/preferences', prefs.value);
     applyUser(data);
-    prefMsg.value = 'تم حفظ اللغة والعملة.';
+    prefMsg.value = 'تم حفظ التفضيلات.';
   } catch (e) {
     prefMsg.value = e?.response?.data?.message || 'تعذّر الحفظ.';
   } finally {

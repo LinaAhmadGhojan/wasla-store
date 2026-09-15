@@ -101,6 +101,56 @@ export function addExternalGuestItem({ preview, quantity = 1 }) {
   return writeGuestCart(items);
 }
 
+export function addExpressGuestItem({
+  item,
+  store = null,
+  quantity = 1,
+  variant = null,
+  extras = [],
+  unitPrice = null,
+}) {
+  const items = readGuestCart();
+  const itemId = item.id;
+  const variantId = variant?.id || null;
+  const extrasKey = (extras || []).map((e) => e.id).sort().join('-');
+  const existing = items.find(
+    (i) => i.type === 'express'
+      && i.express_item_id === itemId
+      && (i.variant_id || null) === variantId
+      && (i.extras_key || '') === extrasKey
+  );
+
+  const price = Number(unitPrice ?? variant?.priceNum ?? item.priceNum ?? 0);
+  const optionLabel = [
+    variant?.label,
+    ...(extras || []).map((e) => `${e.group}: ${e.label}`),
+  ].filter(Boolean).join(' · ');
+
+  if (existing) {
+    existing.quantity = Number(existing.quantity) + Number(quantity);
+  } else {
+    items.push({
+      id: `express-${itemId}-${variantId || 0}-${Date.now()}`,
+      type: 'express',
+      express_item_id: itemId,
+      express_store_id: item.storeId || store?.id || null,
+      variant_id: variantId,
+      variant_label: variant?.label || null,
+      extras: extras || [],
+      extras_key: extrasKey,
+      quantity: Number(quantity),
+      product_name: item.name,
+      image: item.image,
+      store_name: item.store || store?.name || '',
+      unit_price: price,
+      option_label: optionLabel,
+      channel: 'express',
+    });
+  }
+
+  return writeGuestCart(items);
+}
+
 export function updateGuestItemQuantity(id, quantity) {
   const items = readGuestCart().map((item) => {
     if (item.id === id) return { ...item, quantity: Number(quantity) };

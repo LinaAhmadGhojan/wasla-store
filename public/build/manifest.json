@@ -1,6 +1,6 @@
 {
-  "_guestCart-J_LL3YxY.js": {
-    "file": "assets/guestCart-J_LL3YxY.js",
+  "_guestCart-BcmpSelz.js": {
+    "file": "assets/guestCart-BcmpSelz.js",
     "name": "guestCart",
     "isDynamicEntry": true
   },
@@ -25,23 +25,26 @@
     "src": "node_modules/leaflet/dist/images/marker-shadow.png"
   },
   "resources/css/app.css": {
-    "file": "assets/app-DnqwL_uG.css",
+    "file": "assets/app-DnoMtl9C.css",
     "src": "resources/css/app.css",
     "isEntry": true
   },
   "resources/js/app.js": {
-    "file": "assets/app-CCmaqsgm.js",
+    "file": "assets/app-CCT_VCD2.js",
     "name": "app",
     "src": "resources/js/app.js",
     "isEntry": true,
     "imports": [
-      "_guestCart-J_LL3YxY.js"
+      "_guestCart-BcmpSelz.js"
     ],
     "dynamicImports": [
-      "_guestCart-J_LL3YxY.js"
+      "_guestCart-BcmpSelz.js",
+      "resources/js/components/storefront/ExpressPage.vue",
+      "resources/js/components/storefront/ExpressItemPage.vue",
+      "resources/js/components/storefront/ExpressStorePage.vue"
     ],
     "css": [
-      "assets/app-BPrkj9vX.css"
+      "assets/app-CER096Yl.css"
     ],
     "assets": [
       "assets/marker-icon-2x-_ZA0WGCc.png",
@@ -51,13 +54,52 @@
       "assets/layers-2x-Bpkbi35X.png"
     ]
   },
+  "resources/js/components/storefront/ExpressItemPage.vue": {
+    "file": "assets/ExpressItemPage-k0ZdXAQ_.js",
+    "name": "ExpressItemPage",
+    "src": "resources/js/components/storefront/ExpressItemPage.vue",
+    "isDynamicEntry": true,
+    "imports": [
+      "resources/js/app.js",
+      "_guestCart-BcmpSelz.js"
+    ],
+    "css": [
+      "assets/ExpressItemPage-CKX6EF4b.css"
+    ]
+  },
+  "resources/js/components/storefront/ExpressPage.vue": {
+    "file": "assets/ExpressPage-C3pVh9Up.js",
+    "name": "ExpressPage",
+    "src": "resources/js/components/storefront/ExpressPage.vue",
+    "isDynamicEntry": true,
+    "imports": [
+      "resources/js/app.js",
+      "_guestCart-BcmpSelz.js"
+    ],
+    "css": [
+      "assets/ExpressPage-_bcC1XAS.css"
+    ]
+  },
+  "resources/js/components/storefront/ExpressStorePage.vue": {
+    "file": "assets/ExpressStorePage-NOyhVm_R.js",
+    "name": "ExpressStorePage",
+    "src": "resources/js/components/storefront/ExpressStorePage.vue",
+    "isDynamicEntry": true,
+    "imports": [
+      "resources/js/app.js",
+      "_guestCart-BcmpSelz.js"
+    ],
+    "css": [
+      "assets/ExpressStorePage-raeAtGnY.css"
+    ]
+  },
   "resources/js/shein-shop-shell.js": {
-    "file": "assets/shein-shop-shell-Z1z9F-Mu.js",
+    "file": "assets/shein-shop-shell-CVv9Vg3N.js",
     "name": "shein-shop-shell",
     "src": "resources/js/shein-shop-shell.js",
     "isEntry": true,
     "imports": [
-      "_guestCart-J_LL3YxY.js"
+      "_guestCart-BcmpSelz.js"
     ]
   }
 }

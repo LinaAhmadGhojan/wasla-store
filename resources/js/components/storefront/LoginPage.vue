@@ -71,6 +71,7 @@
 <script setup>
 import { ref } from 'vue';
 import api from '../../storefront/api';
+import { homeForChannel, rememberChannel } from '../../storefront/channel';
 import { login } from '../../storefront/store';
 import StorefrontNav from './StorefrontNav.vue';
 import StorefrontFooter from './StorefrontFooter.vue';
@@ -95,7 +96,9 @@ const error = ref('');
 
 function finishAuth(data) {
   login(data.token, data.user);
-  window.location.href = redirectTo;
+  const ch = data.user?.preferred_channel;
+  if (ch === 'express' || ch === 'store') rememberChannel(ch);
+  window.location.href = homeForChannel(data.user, redirectTo);
 }
 
 async function onPasswordLogin() {

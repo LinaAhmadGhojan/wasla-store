@@ -35,6 +35,7 @@ class User extends Authenticatable
         'avatar',
         'locale',
         'preferred_currency',
+        'preferred_channel',
         'privacy_settings',
         'google_id',
         'apple_id',
