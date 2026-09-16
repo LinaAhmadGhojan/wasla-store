@@ -1,11 +1,14 @@
 <template>
-  <header class="storefront-nav" :class="{ 'theme-express': theme === 'express' }" dir="rtl">
+  <header class="storefront-nav" :class="{ 'theme-express': theme === 'express', 'theme-home': theme === 'home' }" dir="rtl">
     <div class="nav-top">
       <a href="/" class="brand" aria-label="وصلة — تسوق شي إن في سوريا">
         <img :src="logoUrl" alt="وصلة WASLA — توصيل شي إن لسوريا" class="brand-logo" />
       </a>
 
       <div class="nav-actions">
+        <a v-if="theme === 'home'" href="/favorites" class="nav-favorite mobile-only" aria-label="المفضلة">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.8 8.7c0 5.1-8.8 10.1-8.8 10.1S3.2 13.8 3.2 8.7A4.7 4.7 0 0 1 12 6.1a4.7 4.7 0 0 1 8.8 2.6Z" /></svg>
+        </a>
         <a href="/cart" class="cart-pill mobile-only" aria-label="سلة التسوق">
           <span class="cart-ico" aria-hidden="true">
             <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
@@ -40,15 +43,22 @@
           title="مسح البحث والرجوع"
           aria-label="مسح البحث والرجوع"
         >←</a>
-        <button type="submit" aria-label="بحث">بحث</button>
+        <button type="submit" aria-label="بحث">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.8" cy="10.8" r="6.8" /><path d="m16 16 5 5" /></svg>
+        </button>
         <input
           type="search"
           name="q"
           :value="initialQuery"
-          placeholder="ابحثي عن منتج… شي إن، براند، SKU"
+          :placeholder="theme === 'home' ? 'ابحثي عن منتج أو براند' : 'ابحثي عن منتج… شي إن، براند، SKU'"
           aria-label="بحث عن منتج"
         />
       </form>
+
+      <a v-if="theme === 'home'" href="/browse" class="locale-pill" aria-label="اختيار اللغة">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9" /><path d="M3 12h18M12 3c2.2 2.4 3.2 5.4 3.2 9S14.2 17.6 12 21C9.8 17.6 8.8 14.6 8.8 12S9.8 6.4 12 3Z" /></svg>
+        <span>العربية</span><b>⌄</b>
+      </a>
 
       <nav
         id="storefront-menu"
@@ -89,14 +99,14 @@
 </template>
 
 <script setup>
-import { onMounted, onBeforeUnmount, ref } from 'vue';
+import { computed, onMounted, onBeforeUnmount, ref } from 'vue';
 import { store, hydrateUser, refreshCartCount, logout } from '../../storefront/store';
 
-defineProps({
+const props = defineProps({
   theme: {
     type: String,
     default: 'store',
-    validator: (v) => ['store', 'express'].includes(v),
+    validator: (v) => ['store', 'express', 'home'].includes(v),
   },
   hideSearch: {
     type: Boolean,
@@ -106,7 +116,9 @@ defineProps({
 
 const params = new URLSearchParams(window.location.search);
 const initialQuery = params.get('q') || '';
-const logoUrl = '/brand/wasla-id-horizontal.png?v=6';
+const logoUrl = computed(() => props.theme === 'home'
+  ? '/brand/wasla-id-horizontal-white.png?v=6'
+  : '/brand/wasla-id-horizontal.png?v=6');
 const menuOpen = ref(false);
 
 function closeMenu() {
@@ -335,6 +347,46 @@ async function onLogout() {
 .theme-express .cart-ico { color: #8a4b12; }
 .theme-express .btn-login { color: #8a4b12 !important; }
 
+.theme-home {
+  background: #087b8d;
+  border-bottom: 3px solid #075d6b;
+  box-shadow: 0 4px 16px rgba(15, 79, 90, 0.2);
+}
+.theme-home .nav-top { max-width: 760px; padding: 0.6rem 1rem; }
+.theme-home .brand { order: 1; }
+.theme-home .brand-logo { height: 48px; }
+.theme-home .nav-search {
+  order: 3;
+  flex-basis: 100%;
+  max-width: none;
+  background: rgba(255,255,255,.14);
+  border-color: rgba(255,255,255,.42);
+}
+.theme-home .nav-search input { color: #fff; }
+.theme-home .nav-search input::placeholder { color: rgba(255,255,255,.78); }
+.theme-home .nav-search button { color: #fff; }
+.nav-search button svg, .nav-favorite svg, .locale-pill svg { width: 1.25rem; height: 1.25rem; display: block; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.theme-home .nav-links { order: 4; }
+.locale-pill {
+  order: 2;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.28rem;
+  padding: 0.58rem 0.8rem;
+  border-radius: 999px;
+  background: rgba(255,255,255,.16);
+  color: #fff;
+  font-size: 0.78rem;
+  font-weight: 800;
+  text-decoration: none;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.locale-pill span { white-space: nowrap; }
+.locale-pill b { font-size: 0.9rem; line-height: 1; font-weight: 900; }
+.theme-home .nav-actions { order: 2; }
+.nav-favorite { color: #fff; text-decoration: none; line-height: 1; }
+
 @media (max-width: 860px) {
   .nav-top {
     flex-wrap: wrap;
@@ -400,5 +452,19 @@ async function onLogout() {
   }
   .theme-express .menu-title { color: #e8c9a0; }
   .theme-express .menu-backdrop { background: rgba(61, 40, 23, 0.4); }
+  .theme-home .nav-top { gap: 0.5rem; padding: 0.55rem 0.75rem 0.7rem; }
+  .theme-home .brand-logo { height: 42px; max-width: 135px; }
+  .theme-home .nav-actions { margin-inline-start: 0; }
+  .theme-home .cart-pill { padding: 0; background: transparent; border: 0; box-shadow: none; font-size: 1.8rem; }
+  .theme-home .cart-label { display: none; }
+  .theme-home .cart-ico svg { width: 28px; height: 28px; }
+  .theme-home .cart-badge { top: -0.25rem; inset-inline-start: -0.25rem; }
+  .theme-home .menu-toggle { order: 0; margin-inline-end: auto; padding: 0.35rem; border: 0; background: transparent; }
+  .theme-home .menu-label { display: none; }
+  .theme-home .burger span { background: #fff; height: 2px; }
+  .theme-home .locale-pill { order: 1; }
+  .theme-home .locale-pill { padding: 0.48rem 0.62rem; font-size: 0.72rem; }
+  .theme-home .locale-pill svg { width: 1rem; height: 1rem; }
+  .theme-home .nav-search { margin-top: 0.15rem; }
 }
 </style>

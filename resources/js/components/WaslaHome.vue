@@ -1,6 +1,34 @@
 <template>
   <div class="wasla-home" dir="rtl">
-    <StorefrontNav />
+    <StorefrontNav theme="home" />
+
+    <main class="mobile-home-shell">
+      <a href="/express" class="home-banner" aria-label="وصلة السريعة - اطلب الآن">
+        <img :src="expressImageUrl" alt="وصلة السريعة - وجباتك المفضلة" class="banner-food" />
+        <span class="express-cta">اطلب الآن</span>
+      </a>
+
+      <div class="home-platforms">
+        <a v-for="platform in quickPlatforms" :key="platform.name" :href="platform.href" class="home-platform">
+          <span class="platform-logo" :class="platform.className">{{ platform.short }}</span><small>{{ platform.name }}</small>
+        </a>
+      </div>
+
+      <section class="fresh-section">
+        <div class="fresh-title"><a href="/shop?section=new">‹ عرض الكل</a><h2>وصلات حديثة <b>⚡</b></h2></div>
+        <div v-if="homeLoading" class="loading-row">جاري تحميل المنتجات...</div>
+        <div v-else class="fresh-grid">
+          <ProductCard v-for="product in freshProducts" :key="product.id" :product="product" />
+        </div>
+      </section>
+    </main>
+
+    <nav class="home-bottom-nav" aria-label="التنقل الرئيسي">
+      <a href="/profile"><span><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="3.5"/><path d="M4.5 21c.8-4 3.2-6 7.5-6s6.7 2 7.5 6"/></svg></span>حسابي</a>
+      <a href="/favorites"><span><svg viewBox="0 0 24 24"><path d="M20.8 8.7c0 5.1-8.8 10.1-8.8 10.1S3.2 13.8 3.2 8.7A4.7 4.7 0 0 1 12 6.1a4.7 4.7 0 0 1 8.8 2.6Z"/></svg></span>المفضلة</a>
+      <a href="/my-requests"><span><svg viewBox="0 0 24 24"><rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 4.5V3h6v1.5M9 12h6M9 16h4"/></svg></span>طلب جديد</a>
+      <a href="/" class="active"><span><svg viewBox="0 0 24 24"><path d="m3 11 9-8 9 8v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1Z"/></svg></span>الرئيسية</a>
+    </nav>
 
     <section class="hero">
       <div class="hero-content">
@@ -96,7 +124,7 @@
       </div>
     </section>
 
-    <StorefrontFooter />
+    <StorefrontFooter theme="home" />
   </div>
 </template>
 
@@ -111,6 +139,7 @@ import StorefrontFooter from './storefront/StorefrontFooter.vue';
 import ProductCard from './storefront/ProductCard.vue';
 
 const markUrl = '/brand/wasla-id-mark.png?v=6';
+const expressImageUrl = '/images/express.png';
 const manyStoresUrl = '/brand/illustrations/onboarding-many-stores.png';
 const globeUrl = '/brand/illustrations/onboarding-globe-ref.png';
 const loginHref = loginUrl('/');
@@ -151,6 +180,14 @@ function sectionSeeAll(key) {
   return `/shop?section=${section}`;
 }
 const homeLoading = ref(true);
+const quickPlatforms = [
+  { name: 'SHEIN', short: 'SHEIN', className: 'shein', href: '/browse?platform=shein' },
+  { name: 'Trendyol', short: 'trend', className: 'trendyol', href: '/browse?platform=trendyol' },
+  { name: 'Temu', short: 'TEMU', className: 'temu', href: '/browse?platform=temu' },
+  { name: 'Amazon', short: 'amazon', className: 'amazon', href: '/browse?platform=amazon' },
+  { name: 'Noon', short: 'نون', className: 'noon', href: '/browse?platform=noon' },
+];
+const freshProducts = ref([]);
 
 async function fillRecentlyViewed(sections) {
   const section = sections.find((s) => s.key === 'recently_viewed');
@@ -193,6 +230,7 @@ onMounted(async () => {
     const { data } = await api.get('/v1/home');
     const sections = data.sections || [];
     await fillRecentlyViewed(sections);
+    freshProducts.value = sections.find((section) => section.key === 'new_arrivals')?.products?.slice(0, 4) || [];
     // Hide empty client sections optionally? Keep visible with hint for favorites/recent.
     homeSections.value = sections;
   } catch (e) {
@@ -205,6 +243,60 @@ onMounted(async () => {
 
 <style scoped>
 .wasla-home { color: #132f37; background: #fff; }
+.wasla-home > .hero,
+.wasla-home > .section { display: none; }
+.mobile-home-shell { max-width: 760px; margin: 0 auto; padding: 1rem 0.75rem 4rem; background: #fff; }
+.home-modes { display: grid; grid-template-columns: 1fr 1fr; gap: 0.65rem; }
+.home-mode { min-height: 3.6rem; border-radius: 0.9rem; display: flex; align-items: center; justify-content: center; gap: 0.45rem; color: #fff; text-decoration: none; font-weight: 900; font-size: 1rem; }
+.home-mode span { font-size: 1.5rem; }
+.store-mode { background: #087b8d; }
+.express-mode { background: #aa5115; }
+.home-banner {
+  position: relative;
+  display: block;
+  overflow: hidden;
+  height: 5rem;
+  margin: 0.75rem 0 0.9rem;
+  border-radius: 0.9rem;
+  background: #fff0e3;
+  color: #fff;
+  text-decoration: none;
+}
+.banner-food {
+  position: absolute;
+  inset: 0;
+  width: 104%;
+  height: 126%;
+  display: block;
+  object-fit: cover;
+  object-position: center;
+  background: #fff0e3;
+  transform: scale(1.02);
+}
+.express-cta {
+  position: absolute;
+  right: 0.6rem;
+  bottom: 0.2rem;
+  z-index: 2;
+  background: #087b8d;
+  color: #fff;
+  border-radius: 0.55rem;
+  padding: 0.32rem 0.7rem;
+  font-size: 0.7rem;
+  font-weight: 900;
+  box-shadow: 0 2px 5px rgba(0,0,0,.14);
+}
+.home-platforms { direction: ltr; display: grid; grid-template-columns: repeat(5, 1fr); gap: 0.45rem; margin: 0.5rem 0 1.4rem; }
+.home-platform { display: flex; flex-direction: column; align-items: center; gap: 0.35rem; color: #155a68; text-decoration: none; font-weight: 800; font-size: 0.72rem; }
+.platform-logo { width: 3.8rem; height: 3.8rem; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #fff; font-weight: 900; font-size: 0.7rem; text-align: center; }
+.platform-logo.shein { background: #111c21; letter-spacing: 0.05em; }.platform-logo.trendyol { background: #ff4c18; font-size: 0.6rem; }.platform-logo.temu { background: #ff6800; }.platform-logo.amazon { background: #17252d; font-size: 0.6rem; }.platform-logo.noon { background: #ffe600; color: #101010; font-size: 1.1rem; }
+.fresh-title { display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.75rem; }.fresh-title h2 { margin: 0; color: #0a5161; font-size: 1.4rem; }.fresh-title h2 b { color: #f5a400; }.fresh-title a { color: #087b8d; text-decoration: none; font-weight: 800; }
+.fresh-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.65rem; }
+.home-bottom-nav { display: grid; grid-template-columns: repeat(4, 1fr); position: fixed; z-index: 45; bottom: 0; left: 0; right: 0; max-width: 760px; margin: 0 auto; min-height: 4.35rem; padding: 0.35rem 0.6rem calc(0.35rem + env(safe-area-inset-bottom, 0px)); background: #087b8d; border-top: 1px solid #075d6b; box-shadow: 0 -4px 16px rgba(15,79,90,.2); }
+.home-bottom-nav a { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0.18rem; color: rgba(255,255,255,.82); text-decoration: none; font-size: 0.68rem; font-weight: 800; }
+.home-bottom-nav a span { height: 1.55rem; line-height: 1; }
+.home-bottom-nav svg { width: 1.45rem; height: 1.45rem; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.home-bottom-nav a.active { color: #fff; }
 .hero {
   display: grid;
   grid-template-columns: 1.05fr 0.95fr;

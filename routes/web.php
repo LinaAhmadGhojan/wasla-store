@@ -37,7 +37,7 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', [StorefrontController::class, 'shop'])->name('home');
+Route::get('/', [StorefrontController::class, 'home'])->name('home');
 Route::get('/sitemap.xml', [StorefrontController::class, 'sitemap'])->name('sitemap');
 Route::get('/shop', [StorefrontController::class, 'shop'])->name('storefront.shop');
 Route::get('/express', [StorefrontController::class, 'express'])->name('storefront.express');

@@ -4,6 +4,11 @@ namespace App\Http\Controllers;
 
 class StorefrontController extends Controller
 {
+    public function home()
+    {
+        return view('storefront.home');
+    }
+
     public function shop()
     {
         return view('storefront.shop');

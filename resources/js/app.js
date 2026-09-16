@@ -4,6 +4,17 @@ import WaslaHome from './components/WaslaHome.vue';
 import AdminDashboard from './components/AdminDashboard.vue';
 import ShopPage from './components/storefront/ShopPage.vue';
 import ProductPage from './components/storefront/ProductPage.vue';
+
+const isMobileViewport = () => window.innerWidth <= 768;
+const currentPath = window.location.pathname;
+
+if (currentPath === '/' && !isMobileViewport()) {
+    window.location.replace('/shop');
+}
+
+if (currentPath === '/shop' && isMobileViewport()) {
+    window.location.replace('/');
+}
 import CartPage from './components/storefront/CartPage.vue';
 import CheckoutPage from './components/storefront/CheckoutPage.vue';
 import OrderConfirmationPage from './components/storefront/OrderConfirmationPage.vue';

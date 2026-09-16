@@ -1,5 +1,5 @@
 <template>
-  <footer class="storefront-footer" :class="{ 'theme-express': theme === 'express' }" dir="rtl">
+  <footer class="storefront-footer" :class="{ 'theme-express': theme === 'express', 'theme-home': theme === 'home' }" dir="rtl">
     <div class="footer-inner">
       <div class="footer-brand">
         <img :src="markUrl" alt="وصلة" class="footer-logo" />
@@ -25,11 +25,11 @@ defineProps({
   theme: {
     type: String,
     default: 'store',
-    validator: (v) => ['store', 'express'].includes(v),
+    validator: (v) => ['store', 'express', 'home'].includes(v),
   },
 });
 
-const markUrl = '/brand/wasla-id-mark.png?v=6';
+const markUrl = '/brand/wasla-id-mark-white.png?v=6';
 const year = new Date().getFullYear();
 </script>
 
@@ -90,6 +90,15 @@ const year = new Date().getFullYear();
   color: #fff4e4;
   border-top-color: #5c3210;
 }
+.storefront-footer.theme-home {
+  background: #087b8d;
+  color: #e9fbfd;
+  border-top-color: #075d6b;
+}
+.theme-home .footer-brand p,
+.theme-home .footer-copy { color: #b8e4e8; }
+.theme-home .footer-links a { color: #e9fbfd; }
+.theme-home .footer-links a:hover { color: #ffffff; }
 .theme-express .footer-brand p,
 .theme-express .footer-copy {
   color: #e8c9a0;
