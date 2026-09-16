@@ -48,7 +48,7 @@ class ExpressStoreController extends Controller
     {
         ExpressStore::create($this->validated($request));
 
-        return redirect()->route('admin.express-stores.index')->with('success', 'تم إضافة متجر لقمة .');
+        return redirect()->route('admin.express-stores.index')->with('success', 'تم إضافة متجر طلباتي .');
     }
 
     public function edit(ExpressStore $express_store)

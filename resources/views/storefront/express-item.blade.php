@@ -1,7 +1,7 @@
 @extends('layouts.storefront')
 
-@section('title', 'طبق | لقمة ')
-@section('meta_description', 'تفاصيل الطبق من لقمة  — توصيل قريب في دمشق.')
+@section('title', 'طبق | طلباتي ')
+@section('meta_description', 'تفاصيل الطبق من طلباتي  — توصيل قريب في دمشق.')
 
 @section('content')
 <wasla-express-item data-item-id="{{ $itemId }}"></wasla-express-item>

@@ -6,11 +6,11 @@
       <p v-if="loading" class="state">عم نحمّل الطبق…</p>
       <div v-else-if="!item" class="state err">
         <p>ما لقينا هالطبق.</p>
-        <a href="/express" class="btn">رجوع للقمة </a>
+        <a href="/express" class="btn">رجوع لطلباتي </a>
       </div>
       <template v-else>
         <nav class="crumbs">
-          <a href="/express">لقمة </a>
+          <a href="/express">طلباتي </a>
           <span>/</span>
           <a v-if="expressStore" :href="`/express/stores/${expressStore.id}`">{{ expressStore.name }}</a>
           <span v-if="expressStore">/</span>
@@ -142,7 +142,7 @@
           <ul class="info-list">
             <li>التوصيل المتوقع: {{ item.store_eta || item.eta }}</li>
             <li v-if="item.delivery_fee_syp != null">رسوم التوصيل: {{ Number(item.delivery_fee_syp).toLocaleString('ar') }} ل.س</li>
-            <li>أطعمة طازجة من متاجر قريبة عبر لقمة .</li>
+            <li>أطعمة طازجة من متاجر قريبة عبر طلباتي .</li>
           </ul>
         </section>
 
@@ -170,7 +170,7 @@
             <h2>آراء الواصلين</h2>
             <p class="reviews-avg">
               <strong>{{ Number(reviewSummary.average || 0).toFixed(1) }}</strong>
-              تقييم لقمة 
+              تقييم طلباتي 
               <span class="stars gold">{{ starsText(Math.round(reviewSummary.average || 0)) }}</span>
             </p>
           </div>
@@ -492,7 +492,7 @@ async function toggleFollow() {
 
 async function shareItem() {
   const url = window.location.href;
-  const title = item.value?.name || 'لقمة ';
+  const title = item.value?.name || 'طلباتي ';
   try {
     if (navigator.share) {
       await navigator.share({ title, url });

@@ -5,7 +5,7 @@
     <div class="shell">
       <div class="mode-switch" role="tablist" aria-label="اختر نوع التسوق">
         <a href="/shop" class="mode-btn" role="tab" @click="rememberChannel('store')">متجر وصلة</a>
-        <a href="/express" class="mode-btn on" role="tab" aria-current="page" @click="rememberChannel('express')">لقمة </a>
+        <a href="/express" class="mode-btn on" role="tab" aria-current="page" @click="rememberChannel('express')">طلباتي </a>
       </div>
       <p class="hint">توصيل من مطاعم ومتاجر قريبة · قريباً في دمشق</p>
 
@@ -262,7 +262,7 @@
             <p v-if="!filteredFoods.length" class="empty">لا نتائج بهالخيارات — امسحي التصفية وجرّبي من جديد.</p>
           </section>
 
-          <p class="note">البيانات من لقمة  — الطلب الحقيقي قيد التجهيز.</p>
+          <p class="note">البيانات من طلباتي  — الطلب الحقيقي قيد التجهيز.</p>
         </div>
       </div>
     </div>
@@ -357,7 +357,7 @@ async function fetchBrowse() {
     expressStores.value = data.stores || [];
     expressFoods.value = data.items || [];
   } catch (e) {
-    loadError.value = e?.response?.data?.message || 'تعذّر تحميل لقمة . جرّبي لاحقاً.';
+    loadError.value = e?.response?.data?.message || 'تعذّر تحميل طلباتي . جرّبي لاحقاً.';
     expressStores.value = [];
     expressFoods.value = [];
   } finally {

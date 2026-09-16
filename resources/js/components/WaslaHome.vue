@@ -154,6 +154,10 @@ import ProductCard from './storefront/ProductCard.vue';
 const markUrl = '/brand/wasla-id-mark.png?v=6';
 const expressBrandImageUrl = '/images/express-brand.png';
 const trendyolLogoUrl = '/images/trendyol-logo.svg';
+const sheinLogoUrl = '/images/shein-logo.svg';
+const temuLogoUrl = '/images/temu-logo.svg?v=3';
+const amazonLogoUrl = '/images/amazon-logo.svg?v=4';
+const noonLogoUrl = '/images/noon-logo.svg?v=2';
 const manyStoresUrl = '/brand/illustrations/onboarding-many-stores.png';
 const globeUrl = '/brand/illustrations/onboarding-globe-ref.png';
 const loginHref = loginUrl('/');
@@ -214,12 +218,12 @@ function sectionSeeAll(key) {
 }
 const homeLoading = ref(true);
 const quickPlatforms = [
-  { name: 'لقمة ', short: '', className: 'express', image: expressBrandImageUrl, href: '/express' },
-  { name: 'SHEIN', short: 'SHEIN', className: 'shein', href: '/browse?platform=shein' },
-  { name: 'Trendyol', short: '', className: 'trendyol', image: trendyolLogoUrl, imageClass: 'platform-brand-image', href: '/browse?platform=trendyol' },
-  { name: 'Temu', short: 'TEMU', className: 'temu', href: '/browse?platform=temu' },
-  { name: 'Amazon', short: 'amazon', className: 'amazon', href: '/browse?platform=amazon' },
-  { name: 'Noon', short: 'نون', className: 'noon', href: '/browse?platform=noon' },
+  { name: 'طلباتي', short: '', className: 'express', image: expressBrandImageUrl, href: '/express' },
+  { name: 'شي إن', short: '', className: 'shein', image: sheinLogoUrl, imageClass: 'platform-brand-image', href: '/browse?platform=shein' },
+  { name: 'ترينديول', short: '', className: 'trendyol', image: trendyolLogoUrl, imageClass: 'platform-brand-image', href: '/browse?platform=trendyol' },
+  { name: 'تيمو', short: '', className: 'temu', image: temuLogoUrl, imageClass: 'platform-brand-image', href: '/browse?platform=temu' },
+  { name: 'أمازون', short: '', className: 'amazon', image: amazonLogoUrl, imageClass: 'platform-brand-image', href: '/browse?platform=amazon' },
+  { name: 'نون', short: '', className: 'noon', image: noonLogoUrl, imageClass: 'platform-brand-image', href: '/browse?platform=noon' },
 ];
 const allProducts = ref([]);
 const freshProducts = ref([]);
@@ -306,13 +310,24 @@ onMounted(async () => {
 .home-mode span { font-size: 1.5rem; }
 .store-mode { background: #087b8d; }
 .express-mode { background: #aa5115; }
-.home-platforms { direction: ltr; display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 0.25rem; margin: 0.5rem 0 1.4rem; }
-.home-platform { display: flex; flex-direction: column; align-items: center; gap: 0.35rem; color: #155a68; text-decoration: none; font-weight: 800; font-size: 0.72rem; }
-.platform-logo { width: clamp(2.8rem, 15vw, 3.8rem); height: clamp(2.8rem, 15vw, 3.8rem); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #fff; font-weight: 900; font-size: 0.7rem; text-align: center; }
-.platform-logo.express { overflow: hidden; background: #fff0e3; border: 2px solid #f2b36e; }
+.home-platforms { direction: rtl; display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 0.25rem; margin: 0.5rem 0 1.4rem; }
+.home-platform { display: flex; flex-direction: column; align-items: center; gap: 0.35rem; color: #155a68; text-decoration: none; font-weight: 900; font-size: 0.76rem; line-height: 1.2; text-align: center; }
+.home-platform small { font: inherit; white-space: nowrap; letter-spacing: 0; }
+.platform-logo { width: clamp(2.5rem, 13vw, 3.3rem); height: clamp(2.5rem, 13vw, 3.3rem); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #fff; font-weight: 900; font-size: 0.7rem; text-align: center; }
+.platform-logo.express { overflow: hidden; background: #fff0e3; border: 2px solid #8a4b12; }
 .platform-food-image { width: 100%; height: 100%; display: block; object-fit: cover; }
 .platform-brand-image { width: 72%; height: 72%; display: block; object-fit: contain; }
-.platform-logo.shein { background: #111c21; letter-spacing: 0.05em; }.platform-logo.trendyol { background: #ff4c18; font-size: 0.6rem; }.platform-logo.temu { background: #ff6800; }.platform-logo.amazon { background: #17252d; font-size: 0.6rem; }.platform-logo.noon { background: #ffe600; color: #101010; font-size: 1.1rem; }
+.platform-logo.shein .platform-brand-image { width: 100%; height: 100%; }
+.platform-logo.shein { overflow: hidden; background: #111c21; letter-spacing: 0.05em; }
+.platform-logo.trendyol { position: relative; overflow: hidden; background: #ff671f; font-size: 0.6rem; }
+.platform-logo.trendyol::before { content: ''; position: absolute; inset: 30% 0; background: #000; }
+.platform-logo.trendyol .platform-brand-image { position: relative; z-index: 1; width: 92%; filter: brightness(0) invert(1); }
+.platform-logo.temu { overflow: hidden; background: #ff6800; }
+.platform-logo.temu .platform-brand-image { width: 86%; filter: brightness(0) invert(1); }
+.platform-logo.amazon { overflow: hidden; background: #17252d; font-size: 0.6rem; }
+.platform-logo.amazon .platform-brand-image { width: 90%; height: 90%; object-fit: contain; }
+.platform-logo.noon { overflow: hidden; background: #ffe500; color: #101010; }
+.platform-logo.noon .platform-brand-image { width: 100%; height: 100%; }
 .fresh-title { display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.75rem; }.fresh-title h2 { margin: 0; color: #0a5161; font-size: 1.4rem; }.fresh-title h2 b { color: #f5a400; }
 .section-link-btn {
   border: none;

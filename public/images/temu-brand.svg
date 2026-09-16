@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120">
+  <rect width="120" height="120" rx="8" fill="#ff7600"/>
+  <g fill="#fff">
+    <path d="M10 43 21 27c2-3 6-3 8 0l4 6 4-6c2-3 6-2 8 1l6 13c2 4-1 7-5 7H15c-4 0-7-3-5-5Z"/>
+    <path d="M52 44c3-8 8-15 14-16 4 0 8 4 10 8 3 5 7 7 12 4 3-2 7 2 4 6-6 7-16 6-22 0-5 5-11 6-18 4Z"/>
+    <path d="M83 45c5-2 9-7 12-14 2-4 7-4 8 0l3 14h5c3 0 5 3 4 5H84c-3 0-4-3-1-5Z"/>
+    <path d="M101 27c7 0 12 4 12 10v9H89v-9c0-6 5-10 12-10Zm-5 7c-2 0-3 2-3 4s1 3 3 3 3-1 3-3-1-4-3-4Zm10 0c-2 0-3 2-3 4s1 3 3 3 3-1 3-3-1-4-3-4Z"/>
+  </g>
+  <text x="60" y="81" fill="#fff" font-family="Arial, sans-serif" font-size="22" font-weight="700" text-anchor="middle" letter-spacing="1">TEMU</text>
+</svg>

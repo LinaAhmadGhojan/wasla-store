@@ -11,7 +11,7 @@
       <div class="footer-links">
         <a href="/">الرئيسية</a>
         <a href="/shop">المتجر</a>
-        <a href="/express">لقمة </a>
+        <a href="/express">طلباتي </a>
         <a href="/browse">تسوق عالمي</a>
         <a href="/cart">السلة</a>
       </div>

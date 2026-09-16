@@ -4,7 +4,7 @@
 <div class="container-fluid py-4">
     <div class="d-flex align-items-center justify-content-between mb-4">
         <div>
-            <h1 class="h3 mb-1">تصنيفات لقمة </h1>
+            <h1 class="h3 mb-1">تصنيفات طلباتي </h1>
             <p class="text-muted mb-0">مطاعم، مخابز، مشروبات، بقالة…</p>
         </div>
         <a href="{{ route('admin.express-categories.create') }}" class="btn btn-primary">تصنيف جديد</a>

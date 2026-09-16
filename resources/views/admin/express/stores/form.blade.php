@@ -4,8 +4,8 @@
 <div class="container-fluid py-4">
     <div class="d-flex align-items-center justify-content-between mb-4">
         <div>
-            <h1 class="h3 mb-1">{{ $store->exists ? 'تعديل متجر' : 'متجر لقمة ' }}</h1>
-            <p class="text-muted mb-0">نفس أسلوب إدارة متاجر وصلة — منفصل للقمة </p>
+            <h1 class="h3 mb-1">{{ $store->exists ? 'تعديل متجر' : 'متجر طلباتي ' }}</h1>
+            <p class="text-muted mb-0">نفس أسلوب إدارة متاجر وصلة — منفصل لطلباتي </p>
         </div>
         <a href="{{ route('admin.express-stores.index') }}" class="btn btn-outline-secondary">رجوع</a>
     </div>

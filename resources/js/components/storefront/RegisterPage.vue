@@ -29,7 +29,7 @@
               </label>
               <label class="channel-pick" :class="{ on: form.preferred_channel === 'express' }">
                 <input v-model="form.preferred_channel" type="radio" value="express" />
-                <strong>لقمة </strong>
+                <strong>طلباتي </strong>
                 <span>مطاعم وتوصيل قريب</span>
               </label>
               <label class="channel-pick" :class="{ on: form.preferred_channel === 'both' }">

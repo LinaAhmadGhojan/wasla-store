@@ -209,13 +209,13 @@ function mapGuest(item) {
       image: item.image || null,
       href: item.express_item_id ? `/express/items/${item.express_item_id}` : '/express',
       meta: item.option_label
-        ? `لقمة  · ${item.store_name || ''} · ${item.option_label}`.replace(/\s·\s$/, '')
-        : (item.store_name ? `لقمة  · ${item.store_name}` : 'لقمة '),
+        ? `طلباتي  · ${item.store_name || ''} · ${item.option_label}`.replace(/\s·\s$/, '')
+        : (item.store_name ? `طلباتي  · ${item.store_name}` : 'طلباتي '),
       unitPrice: Number(item.unit_price || 0),
       pricingKind: 'product',
       quantity: item.quantity,
       updating: false,
-      group: item.store_name ? `🍽 ${item.store_name}` : '🍽 لقمة ',
+      group: item.store_name ? `🍽 ${item.store_name}` : '🍽 طلباتي ',
       placeholder: '🍽️',
       variants: [],
       outOfStock: false,

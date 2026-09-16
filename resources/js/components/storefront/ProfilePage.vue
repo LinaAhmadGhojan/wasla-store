@@ -85,7 +85,7 @@
             <label>الواجهة المفضّلة عند الدخول</label>
             <select v-model="prefs.preferred_channel">
               <option value="store">وصلة (المتجر)</option>
-              <option value="express">لقمة </option>
+              <option value="express">طلباتي </option>
               <option value="both">الاثنين</option>
             </select>
             <button class="btn btn-primary" :disabled="prefSaving">حفظ التفضيلات</button>

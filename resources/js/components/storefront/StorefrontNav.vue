@@ -67,7 +67,7 @@
       >
         <p class="menu-title mobile-only">روابط سريعة</p>
         <a href="/shop" @click="closeMenu">تصفح المنتجات</a>
-        <a href="/express" @click="closeMenu">لقمة </a>
+        <a href="/express" @click="closeMenu">طلباتي </a>
         <a href="/browse" @click="closeMenu">تسوق شي إن والعالمي</a>
         <a href="/buy-from-anywhere" @click="closeMenu">لصق رابط منتج</a>
         <a href="/compare" @click="closeMenu">مقارنة</a>
@@ -335,7 +335,7 @@ async function onLogout() {
 .mobile-only { display: none !important; }
 .desktop-inline { display: inline-flex !important; }
 
-/* لقمة  — ثيم بني */
+/* طلباتي  — ثيم بني */
 .storefront-nav.theme-express {
   background: #8a4b12;
   border-bottom-color: #5c3210;
@@ -354,7 +354,7 @@ async function onLogout() {
 }
 .theme-home .nav-top { max-width: 760px; padding: 0.28rem 0.7rem; }
 .theme-home .brand { order: 1; }
-.theme-home .brand-logo { height: 32px; }
+.theme-home .brand-logo { height: 38px; max-width: 155px; }
 .theme-home .nav-search {
   order: 3;
   flex-basis: 100%;
@@ -463,8 +463,8 @@ async function onLogout() {
   }
   .theme-express .menu-title { color: #e8c9a0; }
   .theme-express .menu-backdrop { background: rgba(61, 40, 23, 0.4); }
-  .theme-home .nav-top { gap: 0.25rem; padding: 0.22rem 0.5rem 0.28rem; }
-  .theme-home .brand-logo { height: 28px; max-width: 100px; }
+  .theme-home .nav-top { gap: 0.35rem; padding: 0.42rem 0.6rem 0.5rem; }
+  .theme-home .brand-logo { height: 35px; max-width: 125px; }
   .theme-home .nav-actions { margin-inline-start: auto; }
   .theme-home .cart-pill { padding: 0; background: transparent; color: #fff !important; border: 0; box-shadow: none; font-size: 1.55rem; }
   .theme-home .cart-label { display: none; }
