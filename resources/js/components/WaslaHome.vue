@@ -3,22 +3,35 @@
     <StorefrontNav theme="home" />
 
     <main class="mobile-home-shell">
-      <a href="/express" class="home-banner" aria-label="وصلة السريعة - اطلب الآن">
-        <img :src="expressImageUrl" alt="وصلة السريعة - وجباتك المفضلة" class="banner-food" />
-        <span class="express-cta">اطلب الآن</span>
-      </a>
-
       <div class="home-platforms">
         <a v-for="platform in quickPlatforms" :key="platform.name" :href="platform.href" class="home-platform">
-          <span class="platform-logo" :class="platform.className">{{ platform.short }}</span><small>{{ platform.name }}</small>
+          <span class="platform-logo" :class="platform.className">
+            <img v-if="platform.image" :src="platform.image" :alt="platform.name" :class="platform.imageClass || 'platform-food-image'" />
+            <template v-else>{{ platform.short }}</template>
+          </span>
+          <small>{{ platform.name }}</small>
         </a>
       </div>
 
       <section class="fresh-section">
-        <div class="fresh-title"><a href="/shop?section=new">‹ عرض الكل</a><h2>وصلات حديثة <b>⚡</b></h2></div>
+        <div class="fresh-title">
+          <!-- <h2>وصلات حديثة <b>⚡</b></h2> -->
+        </div>
+        <div class="mobile-section-tabs" role="tablist" aria-label="فلترة المنتجات">
+          <button
+            v-for="option in mobileFilterOptions"
+            :key="option.key"
+            type="button"
+            class="mobile-section-tab"
+            :class="{ active: mobileFilter === option.key }"
+            @click="mobileFilter = option.key"
+          >
+            {{ option.label }}
+          </button>
+        </div>
         <div v-if="homeLoading" class="loading-row">جاري تحميل المنتجات...</div>
         <div v-else class="fresh-grid">
-          <ProductCard v-for="product in freshProducts" :key="product.id" :product="product" />
+          <ProductCard v-for="product in visibleMobileProducts" :key="product.id" :product="product" />
         </div>
       </section>
     </main>
@@ -129,7 +142,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, computed } from 'vue';
 import api from '../storefront/api';
 import { hydrateUser } from '../storefront/store';
 import { getRecentlyViewedIds } from '../storefront/recentlyViewed';
@@ -139,7 +152,8 @@ import StorefrontFooter from './storefront/StorefrontFooter.vue';
 import ProductCard from './storefront/ProductCard.vue';
 
 const markUrl = '/brand/wasla-id-mark.png?v=6';
-const expressImageUrl = '/images/express.png';
+const expressBrandImageUrl = '/images/express-brand.png';
+const trendyolLogoUrl = '/images/trendyol-logo.svg';
 const manyStoresUrl = '/brand/illustrations/onboarding-many-stores.png';
 const globeUrl = '/brand/illustrations/onboarding-globe-ref.png';
 const loginHref = loginUrl('/');
@@ -167,6 +181,25 @@ const categoryIcons = {
 const categories = ref(fallbackCategories);
 const categoriesLoading = ref(true);
 const homeSections = ref([]);
+const mobileFilter = ref('all');
+const mobileFilterOptions = [
+  { key: 'all', label: 'الكل' },
+  { key: 'new', label: 'وصل حديثا' },
+  { key: 'popular', label: 'الأكثر طلباً' },
+  { key: 'favorites', label: 'المفضلة' },
+];
+
+const visibleMobileProducts = computed(() => {
+  if (mobileFilter.value === 'all') return allProducts.value;
+  if (mobileFilter.value === 'new') return freshProducts.value;
+  if (mobileFilter.value === 'popular') {
+    return homeSections.value.find((section) => section.key === 'trending')?.products || freshProducts.value;
+  }
+  if (mobileFilter.value === 'favorites') {
+    return homeSections.value.find((section) => section.key === 'favorites')?.products || freshProducts.value;
+  }
+  return freshProducts.value;
+});
 
 function sectionSeeAll(key) {
   const map = {
@@ -181,13 +214,31 @@ function sectionSeeAll(key) {
 }
 const homeLoading = ref(true);
 const quickPlatforms = [
+  { name: 'لقمة ', short: '', className: 'express', image: expressBrandImageUrl, href: '/express' },
   { name: 'SHEIN', short: 'SHEIN', className: 'shein', href: '/browse?platform=shein' },
-  { name: 'Trendyol', short: 'trend', className: 'trendyol', href: '/browse?platform=trendyol' },
+  { name: 'Trendyol', short: '', className: 'trendyol', image: trendyolLogoUrl, imageClass: 'platform-brand-image', href: '/browse?platform=trendyol' },
   { name: 'Temu', short: 'TEMU', className: 'temu', href: '/browse?platform=temu' },
   { name: 'Amazon', short: 'amazon', className: 'amazon', href: '/browse?platform=amazon' },
   { name: 'Noon', short: 'نون', className: 'noon', href: '/browse?platform=noon' },
 ];
+const allProducts = ref([]);
 const freshProducts = ref([]);
+
+async function loadAllProducts() {
+  const products = [];
+  let page = 1;
+  let lastPage = 1;
+
+  do {
+    const { data } = await api.get('/products', { params: { page, per_page: 100 } });
+    const pageProducts = data.data || data || [];
+    products.push(...pageProducts);
+    lastPage = data.last_page || 1;
+    page += 1;
+  } while (page <= lastPage);
+
+  return products;
+}
 
 async function fillRecentlyViewed(sections) {
   const section = sections.find((s) => s.key === 'recently_viewed');
@@ -227,9 +278,13 @@ onMounted(async () => {
   }
 
   try {
-    const { data } = await api.get('/v1/home');
+    const [{ data }, products] = await Promise.all([
+      api.get('/v1/home'),
+      loadAllProducts(),
+    ]);
     const sections = data.sections || [];
     await fillRecentlyViewed(sections);
+    allProducts.value = products;
     freshProducts.value = sections.find((section) => section.key === 'new_arrivals')?.products?.slice(0, 4) || [];
     // Hide empty client sections optionally? Keep visible with hint for favorites/recent.
     homeSections.value = sections;
@@ -251,46 +306,45 @@ onMounted(async () => {
 .home-mode span { font-size: 1.5rem; }
 .store-mode { background: #087b8d; }
 .express-mode { background: #aa5115; }
-.home-banner {
-  position: relative;
-  display: block;
-  overflow: hidden;
-  height: 5rem;
-  margin: 0.75rem 0 0.9rem;
-  border-radius: 0.9rem;
-  background: #fff0e3;
-  color: #fff;
-  text-decoration: none;
-}
-.banner-food {
-  position: absolute;
-  inset: 0;
-  width: 104%;
-  height: 126%;
-  display: block;
-  object-fit: cover;
-  object-position: center;
-  background: #fff0e3;
-  transform: scale(1.02);
-}
-.express-cta {
-  position: absolute;
-  right: 0.6rem;
-  bottom: 0.2rem;
-  z-index: 2;
-  background: #087b8d;
-  color: #fff;
-  border-radius: 0.55rem;
-  padding: 0.32rem 0.7rem;
-  font-size: 0.7rem;
-  font-weight: 900;
-  box-shadow: 0 2px 5px rgba(0,0,0,.14);
-}
-.home-platforms { direction: ltr; display: grid; grid-template-columns: repeat(5, 1fr); gap: 0.45rem; margin: 0.5rem 0 1.4rem; }
+.home-platforms { direction: ltr; display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 0.25rem; margin: 0.5rem 0 1.4rem; }
 .home-platform { display: flex; flex-direction: column; align-items: center; gap: 0.35rem; color: #155a68; text-decoration: none; font-weight: 800; font-size: 0.72rem; }
-.platform-logo { width: 3.8rem; height: 3.8rem; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #fff; font-weight: 900; font-size: 0.7rem; text-align: center; }
+.platform-logo { width: clamp(2.8rem, 15vw, 3.8rem); height: clamp(2.8rem, 15vw, 3.8rem); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #fff; font-weight: 900; font-size: 0.7rem; text-align: center; }
+.platform-logo.express { overflow: hidden; background: #fff0e3; border: 2px solid #f2b36e; }
+.platform-food-image { width: 100%; height: 100%; display: block; object-fit: cover; }
+.platform-brand-image { width: 72%; height: 72%; display: block; object-fit: contain; }
 .platform-logo.shein { background: #111c21; letter-spacing: 0.05em; }.platform-logo.trendyol { background: #ff4c18; font-size: 0.6rem; }.platform-logo.temu { background: #ff6800; }.platform-logo.amazon { background: #17252d; font-size: 0.6rem; }.platform-logo.noon { background: #ffe600; color: #101010; font-size: 1.1rem; }
-.fresh-title { display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.75rem; }.fresh-title h2 { margin: 0; color: #0a5161; font-size: 1.4rem; }.fresh-title h2 b { color: #f5a400; }.fresh-title a { color: #087b8d; text-decoration: none; font-weight: 800; }
+.fresh-title { display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.75rem; }.fresh-title h2 { margin: 0; color: #0a5161; font-size: 1.4rem; }.fresh-title h2 b { color: #f5a400; }
+.section-link-btn {
+  border: none;
+  background: transparent;
+  color: #087b8d;
+  font-weight: 800;
+  cursor: pointer;
+  padding: 0;
+}
+.mobile-section-tabs {
+  display: flex;
+  gap: 0.5rem;
+  overflow-x: auto;
+  margin: 0 0 0.8rem;
+  padding-bottom: 0.2rem;
+}
+.mobile-section-tab {
+  border: 1px solid #d9edf1;
+  background: #f6fbfc;
+  color: #0d5b68;
+  border-radius: 999px;
+  padding: 0.45rem 0.8rem;
+  font-weight: 800;
+  font-size: 0.72rem;
+  white-space: nowrap;
+  cursor: pointer;
+}
+.mobile-section-tab.active {
+  background: #087b8d;
+  border-color: #087b8d;
+  color: #fff;
+}
 .fresh-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.65rem; }
 .home-bottom-nav { display: grid; grid-template-columns: repeat(4, 1fr); position: fixed; z-index: 45; bottom: 0; left: 0; right: 0; max-width: 760px; margin: 0 auto; min-height: 4.35rem; padding: 0.35rem 0.6rem calc(0.35rem + env(safe-area-inset-bottom, 0px)); background: #087b8d; border-top: 1px solid #075d6b; box-shadow: 0 -4px 16px rgba(15,79,90,.2); }
 .home-bottom-nav a { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0.18rem; color: rgba(255,255,255,.82); text-decoration: none; font-size: 0.68rem; font-weight: 800; }

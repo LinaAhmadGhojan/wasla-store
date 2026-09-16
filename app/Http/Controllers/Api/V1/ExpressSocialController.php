@@ -51,7 +51,7 @@ class ExpressSocialController extends Controller
             'summary' => [
                 'average' => (float) ($item->rating ?? 0),
                 'count' => (int) ($item->total_reviews ?? 0),
-                'label' => 'تقييم وصلة السريعة',
+                'label' => 'تقييم لقمة ',
             ],
             'rewards' => app(StoreSettings::class)->reviewRewards(),
             'can_review' => $canReview,
@@ -126,7 +126,7 @@ class ExpressSocialController extends Controller
             'summary' => [
                 'average' => (float) $item->fresh()->rating,
                 'count' => (int) $item->fresh()->total_reviews,
-                'label' => 'تقييم وصلة السريعة',
+                'label' => 'تقييم لقمة ',
             ],
         ], 201);
     }

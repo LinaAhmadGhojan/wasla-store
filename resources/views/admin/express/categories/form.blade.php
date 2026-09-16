@@ -5,7 +5,7 @@
     <div class="d-flex align-items-center justify-content-between mb-4">
         <div>
             <h1 class="h3 mb-1">{{ $category->exists ? 'تعديل تصنيف' : 'تصنيف جديد' }}</h1>
-            <p class="text-muted mb-0">وصلة السريعة</p>
+            <p class="text-muted mb-0">لقمة </p>
         </div>
         <a href="{{ route('admin.express-categories.index') }}" class="btn btn-outline-secondary">رجوع</a>
     </div>

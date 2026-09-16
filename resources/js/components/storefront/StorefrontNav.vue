@@ -67,7 +67,7 @@
       >
         <p class="menu-title mobile-only">روابط سريعة</p>
         <a href="/shop" @click="closeMenu">تصفح المنتجات</a>
-        <a href="/express" @click="closeMenu">وصلة السريعة</a>
+        <a href="/express" @click="closeMenu">لقمة </a>
         <a href="/browse" @click="closeMenu">تسوق شي إن والعالمي</a>
         <a href="/buy-from-anywhere" @click="closeMenu">لصق رابط منتج</a>
         <a href="/compare" @click="closeMenu">مقارنة</a>
@@ -335,7 +335,7 @@ async function onLogout() {
 .mobile-only { display: none !important; }
 .desktop-inline { display: inline-flex !important; }
 
-/* وصلة السريعة — ثيم بني */
+/* لقمة  — ثيم بني */
 .storefront-nav.theme-express {
   background: #8a4b12;
   border-bottom-color: #5c3210;

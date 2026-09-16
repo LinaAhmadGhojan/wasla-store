@@ -5,7 +5,7 @@
     <div class="catalog-shell">
       <div class="mode-switch" role="tablist" aria-label="اختر نوع التسوق">
         <a href="/shop" class="mode-btn on" role="tab" aria-selected="true" @click="rememberChannel('store')">متجر وصلة</a>
-        <a href="/express" class="mode-btn mode-express" role="tab" aria-selected="false" @click="rememberChannel('express')">وصلة السريعة</a>
+        <a href="/express" class="mode-btn mode-express" role="tab" aria-selected="false" @click="rememberChannel('express')">لقمة </a>
       </div>
       <p class="mode-hint">منتجات وصلة + شي إن والمتاجر العالمية</p>
 

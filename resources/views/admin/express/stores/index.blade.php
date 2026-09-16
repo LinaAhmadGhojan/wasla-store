@@ -4,7 +4,7 @@
 <div class="container-fluid py-4">
     <div class="d-flex align-items-center justify-content-between mb-4 flex-wrap gap-2">
         <div>
-            <h1 class="h3 mb-1">متاجر وصلة السريعة</h1>
+            <h1 class="h3 mb-1">متاجر لقمة </h1>
             <p class="text-muted mb-0">إضافة وإدارة مطاعم ومتاجر التوصيل السريع</p>
         </div>
         <a href="{{ route('admin.express-stores.create') }}" class="btn btn-primary">متجر جديد</a>

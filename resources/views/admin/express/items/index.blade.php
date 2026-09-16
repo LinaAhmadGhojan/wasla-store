@@ -4,7 +4,7 @@
 <div class="container-fluid py-4">
     <div class="d-flex align-items-center justify-content-between mb-4 flex-wrap gap-2">
         <div>
-            <h1 class="h3 mb-1">أطباق وصلة السريعة</h1>
+            <h1 class="h3 mb-1">أطباق لقمة </h1>
             <p class="text-muted mb-0">قائمة المنتجات/الأطباق للمتاجر السريعة</p>
         </div>
         <a href="{{ route('admin.express-items.create', array_filter(['store_id' => $storeId])) }}" class="btn btn-primary">طبق جديد</a>

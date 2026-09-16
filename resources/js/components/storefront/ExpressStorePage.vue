@@ -6,11 +6,11 @@
       <p v-if="loading" class="state">عم نحمّل المتجر…</p>
       <div v-else-if="!expressStore" class="state err">
         <p>ما لقينا هالمتجر.</p>
-        <a href="/express" class="btn">رجوع لوصلة السريعة</a>
+        <a href="/express" class="btn">رجوع للقمة </a>
       </div>
       <template v-else>
         <nav class="crumbs">
-          <a href="/express">وصلة السريعة</a>
+          <a href="/express">لقمة </a>
           <span>/</span>
           <span>{{ expressStore.name }}</span>
         </nav>
