@@ -275,4 +275,22 @@ function onImgError(e) {
   transition: background 0.15s;
 }
 .btn-view:hover { background: #155f6f; }
+
+@media (max-width: 600px) {
+  .product-card {
+    border-radius: 0.8rem;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.045);
+  }
+  .product-body {
+    padding: 0.5rem 0.55rem 0.6rem;
+    gap: 0.2rem;
+  }
+  .product-name { font-size: 0.74rem; }
+  .price-now { font-size: 0.78rem; }
+  .price-old { font-size: 0.67rem; }
+  .card-actions { gap: 0.3rem; margin-top: 0.25rem; }
+  .btn-wishlist { padding: 0.3rem 0.38rem; }
+  .btn-wishlist svg { width: 0.95rem; height: 0.95rem; }
+  .btn-view { padding: 0.34rem 0.35rem; font-size: 0.7rem; }
+}
 </style>
