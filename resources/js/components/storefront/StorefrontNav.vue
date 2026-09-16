@@ -163,10 +163,10 @@ async function onLogout() {
 .nav-top {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 0.65rem 1.25rem;
+  padding: 0.3rem 1.1rem;
   display: flex;
   align-items: center;
-  gap: 1.25rem;
+  gap: 0.8rem;
   border-inline: 1px solid rgba(255, 255, 255, 0.12);
 }
 .brand {
@@ -176,9 +176,9 @@ async function onLogout() {
   text-decoration: none;
 }
 .brand-logo {
-  height: 48px;
+  height: 34px;
   width: auto;
-  max-width: min(160px, 42vw);
+  max-width: min(135px, 40vw);
   display: block;
   object-fit: contain;
   background: transparent;
@@ -199,9 +199,9 @@ async function onLogout() {
   min-width: 0;
   border: none;
   background: transparent;
-  padding: 0.65rem 1rem;
+  padding: 0.42rem 0.75rem;
   outline: none;
-  font-size: 0.92rem;
+  font-size: 0.86rem;
   color: #ffffff;
 }
 .nav-search input::placeholder { color: rgba(255, 255, 255, 0.72); }
@@ -352,9 +352,9 @@ async function onLogout() {
   border-bottom: 3px solid #075d6b;
   box-shadow: 0 4px 16px rgba(15, 79, 90, 0.2);
 }
-.theme-home .nav-top { max-width: 760px; padding: 0.6rem 1rem; }
+.theme-home .nav-top { max-width: 760px; padding: 0.28rem 0.7rem; }
 .theme-home .brand { order: 1; }
-.theme-home .brand-logo { height: 48px; }
+.theme-home .brand-logo { height: 32px; }
 .theme-home .nav-search {
   order: 3;
   flex-basis: 100%;
@@ -367,16 +367,19 @@ async function onLogout() {
 .theme-home .nav-search button { color: #fff; }
 .nav-search button svg, .nav-favorite svg, .locale-pill svg { width: 1.25rem; height: 1.25rem; display: block; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
 .theme-home .nav-links { order: 4; }
+.theme-home .nav-links a {
+  line-height: 1.1;
+}
 .locale-pill {
   order: 2;
   display: inline-flex;
   align-items: center;
-  gap: 0.28rem;
-  padding: 0.58rem 0.8rem;
+  gap: 0.22rem;
+  padding: 0.38rem 0.62rem;
   border-radius: 999px;
   background: rgba(255,255,255,.16);
   color: #fff;
-  font-size: 0.78rem;
+  font-size: 0.74rem;
   font-weight: 800;
   text-decoration: none;
   white-space: nowrap;
@@ -385,7 +388,15 @@ async function onLogout() {
 .locale-pill span { white-space: nowrap; }
 .locale-pill b { font-size: 0.9rem; line-height: 1; font-weight: 900; }
 .theme-home .nav-actions { order: 2; }
-.nav-favorite { color: #fff; text-decoration: none; line-height: 1; }
+.theme-home .cart-pill { color: #fff !important; }
+.theme-home .cart-ico { color: #fff; }
+.theme-home .nav-favorite { color: #fff !important; }
+.theme-home .nav-actions,
+.theme-home .nav-actions button,
+.theme-home .nav-actions a,
+.theme-home .locale-pill,
+.theme-home .brand { color: #fff; }
+.nav-favorite { text-decoration: none; line-height: 1; }
 
 @media (max-width: 860px) {
   .nav-top {
@@ -452,16 +463,20 @@ async function onLogout() {
   }
   .theme-express .menu-title { color: #e8c9a0; }
   .theme-express .menu-backdrop { background: rgba(61, 40, 23, 0.4); }
-  .theme-home .nav-top { gap: 0.5rem; padding: 0.55rem 0.75rem 0.7rem; }
-  .theme-home .brand-logo { height: 42px; max-width: 135px; }
-  .theme-home .nav-actions { margin-inline-start: 0; }
-  .theme-home .cart-pill { padding: 0; background: transparent; border: 0; box-shadow: none; font-size: 1.8rem; }
+  .theme-home .nav-top { gap: 0.25rem; padding: 0.22rem 0.5rem 0.28rem; }
+  .theme-home .brand-logo { height: 28px; max-width: 100px; }
+  .theme-home .nav-actions { margin-inline-start: auto; }
+  .theme-home .cart-pill { padding: 0; background: transparent; color: #fff !important; border: 0; box-shadow: none; font-size: 1.55rem; }
   .theme-home .cart-label { display: none; }
   .theme-home .cart-ico svg { width: 28px; height: 28px; }
   .theme-home .cart-badge { top: -0.25rem; inset-inline-start: -0.25rem; }
   .theme-home .menu-toggle { order: 0; margin-inline-end: auto; padding: 0.35rem; border: 0; background: transparent; }
   .theme-home .menu-label { display: none; }
   .theme-home .burger span { background: #fff; height: 2px; }
+  .theme-home .nav-favorite svg,
+  .theme-home .cart-ico svg,
+  .theme-home .menu-toggle,
+  .theme-home .locale-pill { color: #fff; }
   .theme-home .locale-pill { order: 1; }
   .theme-home .locale-pill { padding: 0.48rem 0.62rem; font-size: 0.72rem; }
   .theme-home .locale-pill svg { width: 1rem; height: 1rem; }

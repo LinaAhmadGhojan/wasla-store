@@ -35,7 +35,7 @@ const year = new Date().getFullYear();
 
 <style scoped>
 .storefront-footer {
-  margin-top: 3rem;
+  margin-top: 1.5rem;
   background: #1c7282;
   color: #d7f0f3;
   border-top: 3px solid #0f4f5a;
@@ -43,12 +43,12 @@ const year = new Date().getFullYear();
 .footer-inner {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 2.5rem 1.5rem;
+  padding: 0.8rem 1.5rem 0.9rem;
   display: flex;
   flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
-  gap: 1.5rem;
+  gap: 1rem;
 }
 .footer-brand {
   display: flex;
@@ -56,20 +56,20 @@ const year = new Date().getFullYear();
   gap: 0.85rem;
 }
 .footer-logo {
-  width: 48px;
-  height: 48px;
+  width: 40px;
+  height: 40px;
   object-fit: contain;
   background: transparent;
   padding: 0;
 }
 .footer-brand p {
-  margin: 0.15rem 0 0;
+  margin: 0.1rem 0 0;
   color: #a9d7de;
-  font-size: 0.85rem;
+  font-size: 0.78rem;
 }
 .footer-links {
   display: flex;
-  gap: 1.35rem;
+  gap: 1rem 1.2rem;
   flex-wrap: wrap;
 }
 .footer-links a {
@@ -112,13 +112,13 @@ const year = new Date().getFullYear();
 
 @media (max-width: 700px) {
   .footer-inner {
-    padding: 1.75rem 1rem 2rem;
+    padding: 0.8rem 1rem 1rem;
     flex-direction: column;
     align-items: flex-start;
-    gap: 1rem;
+    gap: 0.8rem;
   }
   .footer-links {
-    gap: 0.85rem 1.1rem;
+    gap: 0.7rem 1rem;
   }
 }
 </style>
