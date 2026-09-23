@@ -9,47 +9,17 @@
   >
     <div class="nav-top">
       <div class="nav-bar-row">
-        <button
-          type="button"
-          class="menu-toggle mobile-only"
-          :aria-expanded="menuOpen ? 'true' : 'false'"
-          aria-controls="storefront-menu"
-          :aria-label="menuOpen ? 'إغلاق القائمة' : 'فتح القائمة'"
-          @click="menuOpen = !menuOpen"
-        >
-          <span class="burger" aria-hidden="true">
-            <span /><span /><span />
-          </span>
-          <span class="menu-label">{{ menuOpen ? 'إغلاق' : 'المزيد' }}</span>
-        </button>
-
         <a href="/" class="brand" aria-label="وصلة — تسوق شي إن في سوريا">
           <img :src="logoUrl" alt="وصلة WASLA — توصيل شي إن لسوريا" class="brand-logo" />
-          <span v-if="theme === 'home' || theme === 'store'" class="store-channel-tag">تسوق</span>
-          <span v-if="theme === 'express'" class="express-channel-tag">طلباتي</span>
+          <span v-if="theme === 'home' || theme === 'store'" class="store-channel-tag desktop-only">تسوق</span>
+          <span v-if="theme === 'express'" class="express-channel-tag desktop-only">طلباتي</span>
         </a>
 
-        <a
-          v-if="theme === 'home' || theme === 'store'"
-          href="/express"
-          class="nav-channel-jump nav-channel-express mobile-only"
-          title="طلباتي · أكل وتوصيل"
-        >طلباتي</a>
-        <a
-          v-if="theme === 'express'"
-          href="/"
-          class="nav-channel-jump nav-channel-store mobile-only"
-          title="تسوق وصلة · ملابس ومنتجات"
-        >تسوق</a>
-
-        <div class="nav-actions">
-          <a v-if="theme === 'home' || theme === 'store'" href="/favorites" class="nav-favorite mobile-only nav-header-extra" aria-label="المفضلة">
-            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.8 8.7c0 5.1-8.8 10.1-8.8 10.1S3.2 13.8 3.2 8.7A4.7 4.7 0 0 1 12 6.1a4.7 4.7 0 0 1 8.8 2.6Z" /></svg>
-          </a>
+        <div class="nav-mobile-tools mobile-only">
           <a
             v-if="store.currentUser"
             href="/profile"
-            class="nav-account mobile-only"
+            class="nav-account"
             aria-label="حسابي"
             title="حسابي"
           >
@@ -58,26 +28,46 @@
           <a
             v-else
             :href="loginHref"
-            class="nav-account mobile-only"
+            class="nav-account"
             aria-label="تسجيل الدخول"
             title="تسجيل الدخول"
           >
             <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="3.5"/><path d="M4.5 21c.8-4 3.2-6 7.5-6s6.7 2 7.5 6"/></svg>
           </a>
-          <a href="/cart" class="cart-pill mobile-only nav-header-extra" aria-label="سلة التسوق">
-            <span class="cart-ico" aria-hidden="true">
-              <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-                <circle cx="9" cy="20" r="1.4" fill="currentColor" stroke="none"/>
-                <circle cx="18" cy="20" r="1.4" fill="currentColor" stroke="none"/>
-                <path d="M3 4h2l2.4 11.2a1.5 1.5 0 0 0 1.5 1.2h8.3a1.5 1.5 0 0 0 1.5-1.2L20 8H7"/>
-              </svg>
+          <button
+            type="button"
+            class="menu-toggle"
+            :aria-expanded="menuOpen ? 'true' : 'false'"
+            aria-controls="storefront-menu"
+            :aria-label="menuOpen ? 'إغلاق القائمة' : 'فتح القائمة'"
+            @click="menuOpen = !menuOpen"
+          >
+            <span class="burger" aria-hidden="true">
+              <span /><span /><span />
             </span>
-            <span class="cart-label">السلة</span>
-            <span v-if="store.cartCount > 0" class="cart-badge">{{ store.cartCount }}</span>
+          </button>
+        </div>
+
+        <a
+          v-if="theme === 'home' || theme === 'store'"
+          href="/express"
+          class="nav-channel-jump nav-channel-express desktop-only"
+          title="طلباتي · أكل وتوصيل"
+        >طلباتي</a>
+        <a
+          v-if="theme === 'express'"
+          href="/"
+          class="nav-channel-jump nav-channel-store desktop-only"
+          title="تسوق وصلة · ملابس ومنتجات"
+        >تسوق</a>
+
+        <div class="nav-actions desktop-only">
+          <a v-if="theme === 'home' || theme === 'store'" href="/favorites" class="nav-favorite" aria-label="المفضلة">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.8 8.7c0 5.1-8.8 10.1-8.8 10.1S3.2 13.8 3.2 8.7A4.7 4.7 0 0 1 12 6.1a4.7 4.7 0 0 1 8.8 2.6Z" /></svg>
           </a>
         </div>
 
-        <a v-if="theme === 'home' || theme === 'store'" href="/browse" class="locale-pill mobile-only nav-header-extra" aria-label="اختيار اللغة">
+        <a v-if="theme === 'home' || theme === 'store'" href="/browse" class="locale-pill desktop-only" aria-label="اختيار اللغة">
           <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9" /><path d="M3 12h18M12 3c2.2 2.4 3.2 5.4 3.2 9S14.2 17.6 12 21C9.8 17.6 8.8 14.6 8.8 12S9.8 6.4 12 3Z" /></svg>
           <span>العربية</span><b>⌄</b>
         </a>
@@ -347,6 +337,28 @@ async function onLogout() {
   background: #087b8d;
   color: #fff;
   border-color: rgba(255, 255, 255, 0.35);
+}
+.nav-mobile-tools {
+  display: none;
+  align-items: center;
+  gap: 0.15rem;
+  flex-shrink: 0;
+}
+.nav-mobile-tools .menu-toggle {
+  padding: 0.35rem;
+  border: 0;
+  background: transparent;
+  color: #fff;
+  border-radius: 0.5rem;
+}
+.nav-mobile-tools .burger {
+  width: 18px;
+  gap: 4px;
+}
+.nav-mobile-tools .burger span {
+  height: 2.5px;
+  border-radius: 99px;
+  background: currentColor;
 }
 .nav-search {
   flex: 1;
@@ -674,30 +686,33 @@ async function onLogout() {
   .nav-bar-row {
     display: flex;
     align-items: center;
+    justify-content: space-between;
     width: 100%;
-    gap: 0.35rem;
-    min-height: 2.75rem;
+    gap: 0.5rem;
+    min-height: 2.85rem;
   }
   .nav-bar-row .brand {
-    flex: 1 1 auto;
+    flex: 0 1 auto;
     min-width: 0;
     justify-content: flex-start;
   }
-  .brand-logo { height: 38px; max-width: 142px; }
-  .nav-actions {
-    display: flex !important;
-    align-items: center;
-    gap: 0.15rem;
-    margin-inline-start: 0;
-    flex-shrink: 0;
+  .nav-mobile-tools {
+    display: inline-flex !important;
+    margin-inline-start: auto;
   }
+  .nav-mobile-tools .nav-account {
+    min-width: 2rem;
+    min-height: 2rem;
+    padding: 0.2rem;
+    background: transparent;
+    border: 0;
+  }
+  .nav-mobile-tools .nav-account svg {
+    width: 1.1rem;
+    height: 1.1rem;
+  }
+  .brand-logo { height: 42px; max-width: 158px; }
   .mobile-only { display: inline-flex !important; }
-  .mobile-only.nav-header-extra,
-  a.locale-pill.nav-header-extra,
-  a.cart-pill.nav-header-extra,
-  a.nav-favorite.nav-header-extra {
-    display: none !important;
-  }
   .desktop-inline { display: none !important; }
   .nav-search {
     order: unset;
@@ -773,31 +788,13 @@ async function onLogout() {
   }
   .theme-home .brand-logo,
   .theme-express .brand-logo {
-    height: 40px;
-    max-width: 150px;
+    height: 44px;
+    max-width: 168px;
   }
-  .theme-home .store-channel-tag,
-  .theme-express .express-channel-tag {
-    font-size: 0.65rem;
-    padding: 0.14rem 0.42rem;
+  .theme-home .nav-mobile-tools,
+  .theme-express .nav-mobile-tools {
+    color: #fff;
   }
-  .nav-channel-jump {
-    padding: 0.4rem 0.68rem;
-    font-size: 0.74rem;
-  }
-  .theme-home .menu-toggle,
-  .theme-express .menu-toggle {
-    order: -1;
-    flex-shrink: 0;
-    padding: 0.4rem;
-    border: 0;
-    background: transparent;
-    margin-inline-end: 0.15rem;
-  }
-  .theme-home .menu-label,
-  .theme-express .menu-label { display: none; }
-  .theme-home .burger span,
-  .theme-express .burger span { background: #fff; height: 2px; }
   .theme-home .nav-search,
   .theme-express .nav-search {
     margin-top: 0;
@@ -807,11 +804,6 @@ async function onLogout() {
   .theme-express .express-nav-search input { color: #fff; }
   .theme-express .express-nav-search input::placeholder { color: rgba(255, 255, 255, 0.75); }
   .theme-express .express-nav-search button { color: #fff; }
-  .theme-home .nav-account,
-  .theme-express .nav-account {
-    background: rgba(255, 255, 255, 0.14);
-    border: 1px solid rgba(255, 255, 255, 0.28);
-  }
 }
 
 @media (min-width: 861px) {
