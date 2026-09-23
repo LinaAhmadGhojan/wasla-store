@@ -640,26 +640,14 @@ async function onLogout() {
   border-bottom: 3px solid #075d6b;
   box-shadow: 0 4px 16px rgba(15, 79, 90, 0.2);
 }
-.theme-home .nav-top { max-width: 760px; padding: 0.28rem 0.7rem; }
-.theme-home .brand { order: 1; }
-.theme-home .brand-logo { height: 38px; max-width: 155px; }
-.theme-home .nav-search {
-  order: 3;
-  flex-basis: 100%;
-  max-width: none;
-  background: rgba(255,255,255,.14);
-  border-color: rgba(255,255,255,.42);
-}
 .theme-home .nav-search input { color: #fff; }
 .theme-home .nav-search input::placeholder { color: rgba(255,255,255,.78); }
 .theme-home .nav-search button { color: #fff; }
 .nav-search button svg, .nav-favorite svg, .locale-pill svg { width: 1.25rem; height: 1.25rem; display: block; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
-.theme-home .nav-links { order: 4; }
 .theme-home .nav-links a {
   line-height: 1.1;
 }
 .locale-pill {
-  order: 2;
   display: inline-flex;
   align-items: center;
   gap: 0.22rem;
@@ -675,7 +663,6 @@ async function onLogout() {
 }
 .locale-pill span { white-space: nowrap; }
 .locale-pill b { font-size: 0.9rem; line-height: 1; font-weight: 900; }
-.theme-home .nav-actions { order: 2; }
 .theme-home .cart-pill { color: #0f5a66 !important; }
 .theme-home .cart-ico { color: #1c7282; }
 .theme-home .nav-favorite { color: #fff !important; }
@@ -738,12 +725,18 @@ async function onLogout() {
   }
   .nav-mobile-tools {
     display: inline-flex !important;
+    order: unset;
     margin-inline-start: auto;
   }
   .nav-bar-row .brand {
+    order: unset;
     flex: 0 1 auto;
     min-width: 0;
     justify-content: flex-start;
+  }
+  .theme-home .nav-top {
+    max-width: none;
+    width: 100%;
   }
   .nav-mobile-tools .nav-account,
   .nav-mobile-tools .nav-cart-icon {
@@ -858,6 +851,7 @@ async function onLogout() {
 
 @media (min-width: 861px) {
   .desktop-only { display: inline-flex !important; }
+  .locale-pill { order: 2; }
   .theme-home .nav-top {
     max-width: 1200px;
     margin: 0 auto;
@@ -868,6 +862,7 @@ async function onLogout() {
   }
   .theme-home .brand { order: 1; flex-shrink: 0; }
   .theme-home .brand-logo { height: 42px; max-width: 170px; }
+  .theme-home .nav-actions { order: 2; }
   .theme-home .nav-search {
     order: 2;
     flex: 1 1 auto;
