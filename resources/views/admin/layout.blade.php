@@ -226,7 +226,7 @@
                     // Detect active section to auto-expand it
                     $activeSection = match(true) {
                         request()->routeIs('admin.products.*','admin.categories.*','admin.brands.*','admin.attributes.*','admin.vendors.*') => 'catalog',
-                        request()->routeIs('admin.express-categories.*','admin.express-stores.*','admin.express-items.*') => 'express',
+                        request()->routeIs('admin.express-categories.*','admin.express-stores.*','admin.express-items.*','admin.express-pricing.*') => 'express',
                         request()->routeIs('admin.orders.*','admin.purchase-requests.*','admin.procurement-batches.*','admin.external-platforms.*','admin.exchange-rate.*') => 'orders',
                         request()->routeIs('admin.whatsapp.*','admin.whatsapp-messages.*','admin.whatsapp-groups.*') => 'whatsapp',
                         request()->routeIs('admin.users.*','admin.settings.*') => 'accounts',
@@ -261,6 +261,7 @@
                         <a href="{{ route('admin.express-stores.index') }}" class="@if(request()->routeIs('admin.express-stores.*')) active @endif">🍽 متاجر سريعة</a>
                         <a href="{{ route('admin.express-items.index') }}" class="@if(request()->routeIs('admin.express-items.*')) active @endif">🥙 أطباق وقوائم</a>
                         <a href="{{ route('admin.express-categories.index') }}" class="@if(request()->routeIs('admin.express-categories.*')) active @endif">🗂 تصنيفات سريعة</a>
+                        <a href="{{ route('admin.express-pricing.edit') }}" class="@if(request()->routeIs('admin.express-pricing.*')) active @endif">💰 تسعير على بابك</a>
                     </div>
 
                     {{-- ── الطلبات ── --}}

@@ -19,6 +19,19 @@
           <span v-if="tracking.sources">{{ tracking.sources }}</span>
         </div>
 
+        <div v-if="tracking.progress_percent != null" class="progress-head">
+          <div class="progress-bar" aria-hidden="true">
+            <span :style="{ width: `${tracking.progress_percent}%` }" />
+          </div>
+          <p class="progress-pct">{{ tracking.progress_percent }}% من مسار التوصيل</p>
+        </div>
+
+        <OrderTrackingMap
+          v-if="tracking.live_location"
+          :live="tracking.live_location"
+          class="track-map-block"
+        />
+
         <div class="action-bar">
           <a :href="tracking.invoice_url || `/orders/${orderId}/invoice`" class="btn btn-ghost btn-sm">الفاتورة</a>
           <button
@@ -27,7 +40,7 @@
             class="btn btn-ghost btn-sm"
             :disabled="actionBusy"
             @click="reorder"
-          >Buy Again</button>
+          >اطلبي مجدداً</button>
           <button
             v-if="tracking.can_cancel"
             type="button"
@@ -45,7 +58,9 @@
           <div v-if="tracking.estimated_delivery.shipping_method_label">
             الشحن: {{ tracking.estimated_delivery.shipping_method_label }}
           </div>
-          <div class="live-soon">Live Location — قريباً</div>
+          <div v-if="tracking.estimated_delivery.minutes_remaining" class="live-eta">
+            المتبقي تقريباً: <strong>{{ tracking.estimated_delivery.minutes_remaining }} دقيقة</strong>
+          </div>
         </div>
 
         <ol class="steps" aria-label="مراحل الطلب">
@@ -433,6 +448,7 @@ import api from '../../storefront/api';
 import { store, hydrateUser, refreshCartCount } from '../../storefront/store';
 import StorefrontNav from './StorefrontNav.vue';
 import StorefrontFooter from './StorefrontFooter.vue';
+import OrderTrackingMap from './OrderTrackingMap.vue';
 
 const props = defineProps({
   orderId: { type: [String, Number], required: true },
@@ -872,7 +888,23 @@ h1 { margin: 0 0 0.5rem; color: #1c7282; font-size: 1.55rem; }
   background: #f7fbfc; border-radius: .9rem; border: 1px solid rgba(28,114,130,.12);
   font-size: .9rem; color: #4d6b72;
 }
-.live-soon { margin-top: .35rem; font-size: .8rem; color: #9aabaf; }
+.live-eta { margin-top: .35rem; font-size: .85rem; color: #1c7282; font-weight: 700; }
+.progress-head { margin: 0.85rem 0; }
+.progress-bar {
+  height: 8px;
+  background: #e8f4f6;
+  border-radius: 999px;
+  overflow: hidden;
+}
+.progress-bar span {
+  display: block;
+  height: 100%;
+  background: linear-gradient(90deg, #1c7282, #0a9aad);
+  border-radius: 999px;
+  transition: width 0.35s ease;
+}
+.progress-pct { margin: 0.35rem 0 0; font-size: 0.78rem; font-weight: 800; color: #4d6b72; }
+.track-map-block { margin: 0.85rem 0 1rem; }
 .btn {
   display: inline-flex; align-items: center; justify-content: center;
   border-radius: 999px; padding: .55rem 1rem; font-weight: 800;

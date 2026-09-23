@@ -221,7 +221,7 @@ class WishlistController extends Controller
                     ?? $p->images->first()?->url
                     ?? $p->images->first()?->path
                     ?? null,
-                'url' => url('/products/'.$p->id),
+                'url' => url('/product/'.$p->id),
                 'brand' => $p->brand?->name,
                 'vendor_id' => $p->vendor_id,
                 'in_stock' => $p->variants->isEmpty()

@@ -3,45 +3,23 @@
     <StorefrontNav theme="home" />
 
     <main class="mobile-home-shell">
-      <div class="home-platforms">
-        <a v-for="platform in quickPlatforms" :key="platform.name" :href="platform.href" class="home-platform">
-          <span class="platform-logo" :class="platform.className">
-            <img v-if="platform.image" :src="platform.image" :alt="platform.name" :class="platform.imageClass || 'platform-food-image'" />
-            <template v-else>{{ platform.short }}</template>
-          </span>
-          <small>{{ platform.name }}</small>
-        </a>
-      </div>
+      <HomeChannelCards active="store" store-href="#wasla-products-title" />
 
-      <section class="fresh-section">
-        <div class="fresh-title">
-          <!-- <h2>وصلات حديثة <b>⚡</b></h2> -->
-        </div>
-        <div class="mobile-section-tabs" role="tablist" aria-label="فلترة المنتجات">
-          <button
-            v-for="option in mobileFilterOptions"
-            :key="option.key"
-            type="button"
-            class="mobile-section-tab"
-            :class="{ active: mobileFilter === option.key }"
-            @click="mobileFilter = option.key"
-          >
-            {{ option.label }}
-          </button>
-        </div>
-        <div v-if="homeLoading" class="loading-row">جاري تحميل المنتجات...</div>
-        <div v-else class="fresh-grid">
-          <ProductCard v-for="product in visibleMobileProducts" :key="product.id" :product="product" />
+      <section class="global-brands-section" aria-labelledby="global-brands-title">
+        <h2 id="global-brands-title" class="section-mini-title">تسوق من متاجر عالمية (لصق الرابط)</h2>
+        <div class="home-platforms">
+          <a v-for="platform in quickPlatforms" :key="platform.name" :href="platform.href" class="home-platform">
+            <span class="platform-logo" :class="platform.className">
+              <img v-if="platform.image" :src="platform.image" :alt="platform.name" :class="platform.imageClass || 'platform-food-image'" />
+              <template v-else>{{ platform.short }}</template>
+            </span>
+            <small>{{ platform.name }}</small>
+          </a>
         </div>
       </section>
-    </main>
 
-    <nav class="home-bottom-nav" aria-label="التنقل الرئيسي">
-      <a href="/profile"><span><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="3.5"/><path d="M4.5 21c.8-4 3.2-6 7.5-6s6.7 2 7.5 6"/></svg></span>حسابي</a>
-      <a href="/favorites"><span><svg viewBox="0 0 24 24"><path d="M20.8 8.7c0 5.1-8.8 10.1-8.8 10.1S3.2 13.8 3.2 8.7A4.7 4.7 0 0 1 12 6.1a4.7 4.7 0 0 1 8.8 2.6Z"/></svg></span>المفضلة</a>
-      <a href="/my-requests"><span><svg viewBox="0 0 24 24"><rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 4.5V3h6v1.5M9 12h6M9 16h4"/></svg></span>طلب جديد</a>
-      <a href="/" class="active"><span><svg viewBox="0 0 24 24"><path d="m3 11 9-8 9 8v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1Z"/></svg></span>الرئيسية</a>
-    </nav>
+      <HomeCatalogBrowse />
+    </main>
 
     <section class="hero">
       <div class="hero-content">
@@ -142,17 +120,17 @@
 </template>
 
 <script setup>
-import { ref, onMounted, computed } from 'vue';
+import { ref, onMounted } from 'vue';
 import api from '../storefront/api';
 import { hydrateUser } from '../storefront/store';
 import { getRecentlyViewedIds } from '../storefront/recentlyViewed';
 import { loginUrl } from '../storefront/format';
 import StorefrontNav from './storefront/StorefrontNav.vue';
 import StorefrontFooter from './storefront/StorefrontFooter.vue';
-import ProductCard from './storefront/ProductCard.vue';
+import HomeChannelCards from './storefront/HomeChannelCards.vue';
+import HomeCatalogBrowse from './storefront/HomeCatalogBrowse.vue';
 
 const markUrl = '/brand/wasla-id-mark.png?v=6';
-const expressBrandImageUrl = '/images/express-brand.png';
 const trendyolLogoUrl = '/images/trendyol-logo.svg';
 const sheinLogoUrl = '/images/shein-logo.svg';
 const temuLogoUrl = '/images/temu-logo.svg?v=3';
@@ -185,25 +163,7 @@ const categoryIcons = {
 const categories = ref(fallbackCategories);
 const categoriesLoading = ref(true);
 const homeSections = ref([]);
-const mobileFilter = ref('all');
-const mobileFilterOptions = [
-  { key: 'all', label: 'الكل' },
-  { key: 'new', label: 'وصل حديثا' },
-  { key: 'popular', label: 'الأكثر طلباً' },
-  { key: 'favorites', label: 'المفضلة' },
-];
-
-const visibleMobileProducts = computed(() => {
-  if (mobileFilter.value === 'all') return allProducts.value;
-  if (mobileFilter.value === 'new') return freshProducts.value;
-  if (mobileFilter.value === 'popular') {
-    return homeSections.value.find((section) => section.key === 'trending')?.products || freshProducts.value;
-  }
-  if (mobileFilter.value === 'favorites') {
-    return homeSections.value.find((section) => section.key === 'favorites')?.products || freshProducts.value;
-  }
-  return freshProducts.value;
-});
+const homeLoading = ref(true);
 
 function sectionSeeAll(key) {
   const map = {
@@ -216,34 +176,13 @@ function sectionSeeAll(key) {
   const section = map[key] || 'all';
   return `/shop?section=${section}`;
 }
-const homeLoading = ref(true);
 const quickPlatforms = [
-  { name: 'طلباتي', short: '', className: 'express', image: expressBrandImageUrl, href: '/express' },
-  { name: 'شي إن', short: '', className: 'shein', image: sheinLogoUrl, imageClass: 'platform-brand-image', href: '/browse?platform=shein' },
-  { name: 'ترينديول', short: '', className: 'trendyol', image: trendyolLogoUrl, imageClass: 'platform-brand-image', href: '/browse?platform=trendyol' },
-  { name: 'تيمو', short: '', className: 'temu', image: temuLogoUrl, imageClass: 'platform-brand-image', href: '/browse?platform=temu' },
-  { name: 'أمازون', short: '', className: 'amazon', image: amazonLogoUrl, imageClass: 'platform-brand-image', href: '/browse?platform=amazon' },
   { name: 'نون', short: '', className: 'noon', image: noonLogoUrl, imageClass: 'platform-brand-image', href: '/browse?platform=noon' },
+  { name: 'أمازون', short: '', className: 'amazon', image: amazonLogoUrl, imageClass: 'platform-brand-image', href: '/browse?platform=amazon' },
+  { name: 'تيمو', short: '', className: 'temu', image: temuLogoUrl, imageClass: 'platform-brand-image', href: '/browse?platform=temu' },
+  { name: 'ترينديول', short: '', className: 'trendyol', image: trendyolLogoUrl, imageClass: 'platform-brand-image', href: '/browse?platform=trendyol' },
+  { name: 'شي إن', short: '', className: 'shein', image: sheinLogoUrl, imageClass: 'platform-brand-image', href: '/browse?platform=shein' },
 ];
-const allProducts = ref([]);
-const freshProducts = ref([]);
-
-async function loadAllProducts() {
-  const products = [];
-  let page = 1;
-  let lastPage = 1;
-
-  do {
-    const { data } = await api.get('/products', { params: { page, per_page: 100 } });
-    const pageProducts = data.data || data || [];
-    products.push(...pageProducts);
-    lastPage = data.last_page || 1;
-    page += 1;
-  } while (page <= lastPage);
-
-  return products;
-}
-
 async function fillRecentlyViewed(sections) {
   const section = sections.find((s) => s.key === 'recently_viewed');
   if (!section) return;
@@ -282,15 +221,9 @@ onMounted(async () => {
   }
 
   try {
-    const [{ data }, products] = await Promise.all([
-      api.get('/v1/home'),
-      loadAllProducts(),
-    ]);
+    const { data } = await api.get('/v1/home');
     const sections = data.sections || [];
     await fillRecentlyViewed(sections);
-    allProducts.value = products;
-    freshProducts.value = sections.find((section) => section.key === 'new_arrivals')?.products?.slice(0, 4) || [];
-    // Hide empty client sections optionally? Keep visible with hint for favorites/recent.
     homeSections.value = sections;
   } catch (e) {
     homeSections.value = [];
@@ -304,18 +237,21 @@ onMounted(async () => {
 .wasla-home { color: #132f37; background: #fff; }
 .wasla-home > .hero,
 .wasla-home > .section { display: none; }
-.mobile-home-shell { max-width: 760px; margin: 0 auto; padding: 1rem 0.75rem 4rem; background: #fff; }
-.home-modes { display: grid; grid-template-columns: 1fr 1fr; gap: 0.65rem; }
-.home-mode { min-height: 3.6rem; border-radius: 0.9rem; display: flex; align-items: center; justify-content: center; gap: 0.45rem; color: #fff; text-decoration: none; font-weight: 900; font-size: 1rem; }
-.home-mode span { font-size: 1.5rem; }
-.store-mode { background: #087b8d; }
-.express-mode { background: #aa5115; }
-.home-platforms { direction: rtl; display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 0.25rem; margin: 0.5rem 0 1.4rem; }
+.mobile-home-shell { max-width: 760px; margin: 0 auto; padding: 0.65rem 0.75rem 5rem; background: #fff; }
+@media (min-width: 1024px) {
+  .mobile-home-shell { max-width: 1200px; padding: 0.85rem 1.25rem 2rem; }
+}
+.section-mini-title {
+  margin: 0 0 0.55rem;
+  font-size: 0.82rem;
+  font-weight: 900;
+  color: #5a7278;
+}
+.global-brands-section { margin-bottom: 1.1rem; }
+.home-platforms { direction: rtl; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 0.35rem; margin: 0; }
 .home-platform { display: flex; flex-direction: column; align-items: center; gap: 0.35rem; color: #155a68; text-decoration: none; font-weight: 900; font-size: 0.76rem; line-height: 1.2; text-align: center; }
 .home-platform small { font: inherit; white-space: nowrap; letter-spacing: 0; }
 .platform-logo { width: clamp(2.5rem, 13vw, 3.3rem); height: clamp(2.5rem, 13vw, 3.3rem); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #fff; font-weight: 900; font-size: 0.7rem; text-align: center; }
-.platform-logo.express { overflow: hidden; background: #fff0e3; border: 2px solid #8a4b12; }
-.platform-food-image { width: 100%; height: 100%; display: block; object-fit: cover; }
 .platform-brand-image { width: 72%; height: 72%; display: block; object-fit: contain; }
 .platform-logo.shein .platform-brand-image { width: 100%; height: 100%; }
 .platform-logo.shein { overflow: hidden; background: #111c21; letter-spacing: 0.05em; }
@@ -337,35 +273,10 @@ onMounted(async () => {
   cursor: pointer;
   padding: 0;
 }
-.mobile-section-tabs {
-  display: flex;
-  gap: 0.5rem;
-  overflow-x: auto;
-  margin: 0 0 0.8rem;
-  padding-bottom: 0.2rem;
+.wasla-home :deep(.storefront-footer) { display: none; }
+@media (min-width: 1024px) {
+  .wasla-home :deep(.storefront-footer) { display: block; }
 }
-.mobile-section-tab {
-  border: 1px solid #d9edf1;
-  background: #f6fbfc;
-  color: #0d5b68;
-  border-radius: 999px;
-  padding: 0.45rem 0.8rem;
-  font-weight: 800;
-  font-size: 0.72rem;
-  white-space: nowrap;
-  cursor: pointer;
-}
-.mobile-section-tab.active {
-  background: #087b8d;
-  border-color: #087b8d;
-  color: #fff;
-}
-.fresh-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.65rem; }
-.home-bottom-nav { display: grid; grid-template-columns: repeat(4, 1fr); position: fixed; z-index: 45; bottom: 0; left: 0; right: 0; max-width: 760px; margin: 0 auto; min-height: 4.35rem; padding: 0.35rem 0.6rem calc(0.35rem + env(safe-area-inset-bottom, 0px)); background: #087b8d; border-top: 1px solid #075d6b; box-shadow: 0 -4px 16px rgba(15,79,90,.2); }
-.home-bottom-nav a { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0.18rem; color: rgba(255,255,255,.82); text-decoration: none; font-size: 0.68rem; font-weight: 800; }
-.home-bottom-nav a span { height: 1.55rem; line-height: 1; }
-.home-bottom-nav svg { width: 1.45rem; height: 1.45rem; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
-.home-bottom-nav a.active { color: #fff; }
 .hero {
   display: grid;
   grid-template-columns: 1.05fr 0.95fr;

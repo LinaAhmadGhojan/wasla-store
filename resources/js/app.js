@@ -5,15 +5,11 @@ import AdminDashboard from './components/AdminDashboard.vue';
 import ShopPage from './components/storefront/ShopPage.vue';
 import ProductPage from './components/storefront/ProductPage.vue';
 
-const isMobileViewport = () => window.innerWidth <= 768;
 const currentPath = window.location.pathname;
 
-if (currentPath === '/' && !isMobileViewport()) {
-    window.location.replace('/shop');
-}
-
-if (currentPath === '/shop' && isMobileViewport()) {
-    window.location.replace('/');
+if (currentPath === '/shop') {
+    const qs = window.location.search || '';
+    window.location.replace(`/${qs}`);
 }
 import CartPage from './components/storefront/CartPage.vue';
 import CheckoutPage from './components/storefront/CheckoutPage.vue';
@@ -35,6 +31,7 @@ import StorePage from './components/storefront/StorePage.vue';
 import ComparePage from './components/storefront/ComparePage.vue';
 import OrderTrackPage from './components/storefront/OrderTrackPage.vue';
 import OrderInvoicePage from './components/storefront/OrderInvoicePage.vue';
+import { mountMobileBottomNav } from './storefront/mobileNav';
 
 const homeElement = document.querySelector('wasla-home');
 const adminElement = document.querySelector('admin-dashboard');
@@ -77,6 +74,13 @@ const expressElement = document.querySelector('wasla-express');
 if (expressElement) {
     import('./components/storefront/ExpressPage.vue').then(({ default: ExpressPage }) => {
         createApp(ExpressPage).mount(expressElement);
+    });
+}
+
+const expressErrandElement = document.querySelector('wasla-express-errand');
+if (expressErrandElement) {
+    import('./components/storefront/ExpressErrandPage.vue').then(({ default: ExpressErrandPage }) => {
+        createApp(ExpressErrandPage).mount(expressErrandElement);
     });
 }
 
@@ -188,3 +192,5 @@ if (storeElement) {
         storeId: storeElement.dataset.storeId,
     }).mount(storeElement);
 }
+
+mountMobileBottomNav();

@@ -245,7 +245,6 @@
       </template>
     </div>
 
-    <StorefrontFooter theme="express" />
   </div>
 </template>
 
@@ -256,7 +255,6 @@ import { rememberChannel } from '../../storefront/channel';
 import { addExpressGuestItem } from '../../storefront/guestCart';
 import { isLoggedIn as checkAuth, refreshCartCount, store as authStore } from '../../storefront/store';
 import StorefrontNav from './StorefrontNav.vue';
-import StorefrontFooter from './StorefrontFooter.vue';
 
 const props = defineProps({
   itemId: { type: [String, Number], required: true },

@@ -17,6 +17,21 @@ body {
   overflow-x: clip;
 }
 
+body.wasla-channel-store {
+  background: #f5fbfc;
+}
+
+body.wasla-channel-express {
+  background: linear-gradient(180deg, #f0e0cc 0%, #faf6f1 35%, #fff 100%);
+  background-attachment: fixed;
+}
+
+@media (max-width: 1023px) {
+  body.wasla-mobile-nav {
+    padding-bottom: calc(4.85rem + env(safe-area-inset-bottom, 0px));
+  }
+}
+
 img, video, svg {
   max-width: 100%;
   height: auto;

@@ -16,6 +16,7 @@
 
     # Product pages must hit Laravel — public/products/{id}/ holds images, not HTML
     RewriteRule ^products/([0-9]+)/?$ index.php [L]
+    RewriteRule ^product/([0-9]+)/?$ index.php [L]
 
     # Send Requests To Front Controller...
     RewriteCond %{REQUEST_FILENAME} !-d

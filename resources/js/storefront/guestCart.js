@@ -16,6 +16,9 @@ function readGuestCart() {
 
 function writeGuestCart(items) {
   localStorage.setItem(GUEST_CART_KEY, JSON.stringify(items));
+  if (typeof window !== 'undefined') {
+    window.dispatchEvent(new CustomEvent('wasla-cart-changed'));
+  }
   return items;
 }
 

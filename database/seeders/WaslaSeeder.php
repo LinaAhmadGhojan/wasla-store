@@ -266,60 +266,6 @@ class WaslaSeeder extends Seeder
             });
         }
 
-        // Avoid duplicating demo orders on every seed run
-        if (! Order::where('user_id', $customer->id)->exists()) {
-            $firstProduct = Product::first();
-            $firstVariant = ProductVariant::first();
-
-            if ($firstProduct && $firstVariant) {
-                $order = Order::create([
-                    'user_id' => $customer->id,
-                    'vendor_id' => $store1->id,
-                    'status' => 'delivered',
-                    'subtotal' => 49.99,
-                    'shipping_cost' => 5.00,
-                    'tax_amount' => 2.50,
-                    'discount_amount' => 0.00,
-                    'total' => 57.49,
-                    'shipping_address_id' => Address::firstOrCreate(
-                        ['user_id' => $customer->id, 'label' => 'Home'],
-                        [
-                            'recipient_name' => $customer->name,
-                            'phone' => $customer->phone,
-                            'country' => 'UAE',
-                            'city' => 'Dubai',
-                            'state' => 'Dubai',
-                            'postal_code' => '00000',
-                            'street_address' => '123 Wasla Street',
-                            'is_default' => true,
-                        ]
-                    )->id,
-                    'billing_address_id' => null,
-                    'tracking_number' => 'WAS' . rand(1000000, 9999999),
-                    'shipping_method' => 'Standard',
-                    'placed_at' => now()->subDays(4),
-                    'delivered_at' => now()->subDays(1),
-                ]);
-
-                OrderItem::create([
-                    'order_id' => $order->id,
-                    'product_id' => $firstProduct->id,
-                    'product_variant_id' => $firstVariant->id,
-                    'quantity' => 1,
-                    'unit_price' => 49.99,
-                    'line_total' => 49.99,
-                ]);
-
-                Payment::create([
-                    'order_id' => $order->id,
-                    'payment_method' => 'cash_on_delivery',
-                    'transaction_id' => null,
-                    'amount' => 57.49,
-                    'status' => 'paid',
-                    'paid_at' => now()->subDays(3),
-                ]);
-            }
-        }
     }
 
     /**

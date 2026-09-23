@@ -8,6 +8,7 @@ use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\Admin\ExchangeRateController as AdminExchangeRateController;
 use App\Http\Controllers\Admin\ExpressCategoryController as AdminExpressCategoryController;
 use App\Http\Controllers\Admin\ExpressMenuItemController as AdminExpressMenuItemController;
+use App\Http\Controllers\Admin\ExpressErrandPricingController as AdminExpressErrandPricingController;
 use App\Http\Controllers\Admin\ExpressStoreController as AdminExpressStoreController;
 use App\Http\Controllers\Admin\ExternalPlatformController as AdminExternalPlatformController;
 use App\Http\Controllers\Admin\NotificationController as AdminNotificationController;
@@ -40,6 +41,7 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', [StorefrontController::class, 'home'])->name('home');
 Route::get('/sitemap.xml', [StorefrontController::class, 'sitemap'])->name('sitemap');
 Route::get('/shop', [StorefrontController::class, 'shop'])->name('storefront.shop');
+Route::get('/express/errand', [StorefrontController::class, 'expressErrand'])->name('storefront.express.errand');
 Route::get('/express', [StorefrontController::class, 'express'])->name('storefront.express');
 Route::get('/express/stores/{store}', [StorefrontController::class, 'expressStoreShow'])->whereNumber('store')->name('storefront.express.store');
 Route::get('/express/items/{item}', [StorefrontController::class, 'expressItemShow'])->whereNumber('item')->name('storefront.express.item');
@@ -87,6 +89,8 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::resource('express-categories', AdminExpressCategoryController::class)->except(['show']);
     Route::resource('express-stores', AdminExpressStoreController::class)->except(['show']);
     Route::resource('express-items', AdminExpressMenuItemController::class)->except(['show']);
+    Route::get('express-pricing', [AdminExpressErrandPricingController::class, 'edit'])->name('express-pricing.edit');
+    Route::put('express-pricing', [AdminExpressErrandPricingController::class, 'update'])->name('express-pricing.update');
 
     Route::resource('attributes', AdminAttributeController::class)->except(['show']);
     Route::post('attributes/{attribute}/values', [AdminAttributeValueController::class, 'store'])->name('attributes.values.store');

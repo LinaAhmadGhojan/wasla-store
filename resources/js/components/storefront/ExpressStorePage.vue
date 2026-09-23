@@ -73,7 +73,6 @@
       </template>
     </div>
 
-    <StorefrontFooter theme="express" />
   </div>
 </template>
 
@@ -83,7 +82,6 @@ import api from '../../storefront/api';
 import { rememberChannel } from '../../storefront/channel';
 import { isLoggedIn as checkAuth, store as authStore } from '../../storefront/store';
 import StorefrontNav from './StorefrontNav.vue';
-import StorefrontFooter from './StorefrontFooter.vue';
 
 const props = defineProps({
   storeId: { type: [String, Number], required: true },

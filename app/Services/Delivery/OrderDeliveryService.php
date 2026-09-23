@@ -351,12 +351,82 @@ class OrderDeliveryService
         $placed = $order->placed_at ?? $order->created_at;
         $etaLabel = $cfg['eta'] ?? null;
 
-        return [
+        $eta = [
             'shipping_method' => $method,
             'shipping_method_label' => $cfg['label'] ?? $method,
             'eta_label' => $etaLabel,
             'placed_at' => optional($placed)->toIso8601String(),
-            'live_location' => null, // لاحقاً
+        ];
+        $eta['live_location'] = $this->liveLocationMap($order);
+        $eta['minutes_remaining'] = $this->estimatedMinutesRemaining($order);
+
+        return $eta;
+    }
+
+    public function customerProgressPercent(Order $order): int
+    {
+        $steps = $this->customerStatusSteps($order);
+        $total = max(count($steps), 1);
+        $done = collect($steps)->filter(fn (array $s) => $s['done'])->count();
+        $current = collect($steps)->first(fn (array $s) => $s['current']);
+        if ($this->customerStatusKey($order->status) === 'delivered') {
+            return 100;
+        }
+        if ($current) {
+            return (int) min(95, round((($done + 0.45) / $total) * 100));
+        }
+
+        return (int) min(90, round(($done / $total) * 100));
+    }
+
+    public function estimatedMinutesRemaining(Order $order): ?int
+    {
+        return match ($this->customerStatusKey($order->status)) {
+            'pending' => 180,
+            'preparing' => 90,
+            'shipped' => 45,
+            'out_for_delivery' => 18,
+            'delivered' => 0,
+            default => null,
+        };
+    }
+
+    /** نقاط الخريطة للزبون: مستودع → مندوب → عنوان */
+    public function liveLocationMap(Order $order): ?array
+    {
+        $order->loadMissing(['shippingAddress', 'driver']);
+        $geo = $order->delivery_geo;
+
+        if (is_array($geo) && isset($geo['destination']['lat'], $geo['destination']['lng'])) {
+            $destination = $geo['destination'];
+            $origin = $geo['origin'] ?? null;
+            $driver = $geo['driver'] ?? null;
+        } else {
+            $addr = $order->shippingAddress;
+            if (! $addr || $addr->latitude === null || $addr->longitude === null) {
+                return null;
+            }
+            $destination = [
+                'lat' => (float) $addr->latitude,
+                'lng' => (float) $addr->longitude,
+                'label' => $addr->city ?: 'عنوان التوصيل',
+            ];
+            $origin = [
+                'lat' => 33.5138,
+                'lng' => 36.2765,
+                'label' => 'مستودع وصلة',
+            ];
+            $driver = null;
+        }
+
+        $key = $this->customerStatusKey($order->status);
+        $showDriver = in_array($key, ['shipped', 'out_for_delivery'], true) && $driver;
+
+        return [
+            'origin' => $origin,
+            'destination' => $destination,
+            'driver' => $showDriver ? $driver : null,
+            'show_route' => $showDriver || in_array($key, ['out_for_delivery'], true),
         ];
     }
 

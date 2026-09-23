@@ -31,6 +31,7 @@ class Order extends Model
         'signature_path',
         'proof_photo_path',
         'failure_reason',
+        'delivery_geo',
         'placed_at',
         'delivered_at',
         'canceled_at',
@@ -64,6 +65,7 @@ class Order extends Model
         'is_gift' => 'boolean',
         'gift_wrapping' => 'boolean',
         'wallet_amount' => 'float',
+        'delivery_geo' => 'array',
     ];
 
     protected $hidden = [

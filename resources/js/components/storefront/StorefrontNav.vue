@@ -1,14 +1,37 @@
 <template>
-  <header class="storefront-nav" :class="{ 'theme-express': theme === 'express', 'theme-home': theme === 'home' }" dir="rtl">
+  <header
+    class="storefront-nav"
+    :class="{
+      'theme-express': theme === 'express',
+      'theme-home': theme === 'home' || theme === 'store',
+    }"
+    dir="rtl"
+  >
     <div class="nav-top">
       <a href="/" class="brand" aria-label="وصلة — تسوق شي إن في سوريا">
         <img :src="logoUrl" alt="وصلة WASLA — توصيل شي إن لسوريا" class="brand-logo" />
+        <span v-if="theme === 'express'" class="express-channel-tag">طلباتي</span>
       </a>
 
       <div class="nav-actions">
-        <a v-if="theme === 'home'" href="/favorites" class="nav-favorite mobile-only" aria-label="المفضلة">
+        <a v-if="theme === 'home' || theme === 'store'" href="/favorites" class="nav-favorite mobile-only" aria-label="المفضلة">
           <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.8 8.7c0 5.1-8.8 10.1-8.8 10.1S3.2 13.8 3.2 8.7A4.7 4.7 0 0 1 12 6.1a4.7 4.7 0 0 1 8.8 2.6Z" /></svg>
         </a>
+        <a
+          v-if="store.currentUser"
+          href="/profile"
+          class="nav-account mobile-only"
+          aria-label="حسابي"
+          title="حسابي"
+        >
+          <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="3.5"/><path d="M4.5 21c.8-4 3.2-6 7.5-6s6.7 2 7.5 6"/></svg>
+        </a>
+        <a
+          v-else
+          :href="loginHref"
+          class="nav-account nav-login-chip mobile-only"
+          title="تسجيل الدخول"
+        >دخول</a>
         <a href="/cart" class="cart-pill mobile-only" aria-label="سلة التسوق">
           <span class="cart-ico" aria-hidden="true">
             <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
@@ -35,10 +58,28 @@
         </button>
       </div>
 
-      <form v-if="!hideSearch" class="nav-search" action="/shop" method="get">
+      <form
+        v-if="theme === 'express' && hideSearch"
+        class="nav-search express-nav-search desktop-only"
+        action="/express"
+        method="get"
+      >
+        <button type="submit" aria-label="بحث">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.8" cy="10.8" r="6.8" /><path d="m16 16 5 5" /></svg>
+        </button>
+        <input
+          type="search"
+          name="q"
+          :value="initialQuery"
+          placeholder="ابحث عن مطعم أو طبق…"
+          aria-label="بحث في طلباتي"
+        />
+      </form>
+
+      <form v-else-if="!hideSearch" class="nav-search" action="/" method="get">
         <a
           v-if="initialQuery"
-          href="/shop"
+          href="/"
           class="nav-clear-search"
           title="مسح البحث والرجوع"
           aria-label="مسح البحث والرجوع"
@@ -50,15 +91,69 @@
           type="search"
           name="q"
           :value="initialQuery"
-          :placeholder="theme === 'home' ? 'ابحثي عن منتج أو براند' : 'ابحثي عن منتج… شي إن، براند، SKU'"
+          placeholder="ابحثي عن منتج أو براند"
           aria-label="بحث عن منتج"
         />
       </form>
 
-      <a v-if="theme === 'home'" href="/browse" class="locale-pill" aria-label="اختيار اللغة">
+      <a v-if="theme === 'home' || theme === 'store'" href="/browse" class="locale-pill mobile-only" aria-label="اختيار اللغة">
         <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9" /><path d="M3 12h18M12 3c2.2 2.4 3.2 5.4 3.2 9S14.2 17.6 12 21C9.8 17.6 8.8 14.6 8.8 12S9.8 6.4 12 3Z" /></svg>
         <span>العربية</span><b>⌄</b>
       </a>
+
+      <div v-if="theme === 'express'" class="express-desktop-actions desktop-only">
+        <a href="/" class="nav-icon-btn" title="تسوق وصلة · ملابس">
+          <svg viewBox="0 0 24 24"><path d="M6 7h15l-1.5 9h-12L6 7Z"/><path d="M6 7 5 4H2"/><circle cx="9" cy="20" r="1.4"/><circle cx="18" cy="20" r="1.4"/></svg>
+          <span>وصلة</span>
+        </a>
+        <a href="/express" class="nav-icon-btn nav-icon-active" title="طلباتي · أكل">
+          <svg viewBox="0 0 24 24"><path d="M3.5 17h17"/><path d="M6 17V11.5c0-3.3 2.7-6 6-6s6 2.7 6 6V17"/><path d="M12 5.5V3.5"/><path d="M10.5 3.5h3"/></svg>
+          <span>طلباتي</span>
+        </a>
+        <a href="/favorites" class="nav-icon-btn" title="المفضلة">
+          <svg viewBox="0 0 24 24"><path d="M20.8 8.7c0 5.1-8.8 10.1-8.8 10.1S3.2 13.8 3.2 8.7A4.7 4.7 0 0 1 12 6.1a4.7 4.7 0 0 1 8.8 2.6Z"/></svg>
+          <span>المفضلة</span>
+        </a>
+        <a href="/cart" class="nav-icon-btn nav-icon-cart" title="السلة">
+          <svg viewBox="0 0 24 24"><path d="M3 4h2l2.4 11.2a1.5 1.5 0 0 0 1.5 1.2h8.3a1.5 1.5 0 0 0 1.5-1.2L20 8H7"/><circle cx="9" cy="20" r="1.4"/><circle cx="18" cy="20" r="1.4"/></svg>
+          <span>السلة</span>
+          <em v-if="store.cartCount > 0" class="nav-icon-badge">{{ store.cartCount }}</em>
+        </a>
+        <a v-if="store.currentUser" href="/profile" class="nav-icon-btn" title="حسابي">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="3.5"/><path d="M4.5 21c.8-4 3.2-6 7.5-6s6.7 2 7.5 6"/></svg>
+          <span>حسابي</span>
+        </a>
+        <a v-else href="/login" class="nav-icon-btn nav-icon-login express-login" title="دخول">
+          <span>دخول</span>
+        </a>
+      </div>
+
+      <div v-if="theme === 'home' || theme === 'store'" class="home-desktop-actions desktop-only">
+        <a href="/express" class="nav-icon-btn" title="طلباتي · أكل">
+          <svg viewBox="0 0 24 24"><path d="M3.5 17h17"/><path d="M6 17V11.5c0-3.3 2.7-6 6-6s6 2.7 6 6V17"/><path d="M12 5.5V3.5"/><path d="M10.5 3.5h3"/></svg>
+          <span>أكل</span>
+        </a>
+        <a href="/browse" class="nav-icon-btn" title="تسوق عالمي">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.2 2.4 3.2 5.4 3.2 9S14.2 17.6 12 21C9.8 17.6 8.8 14.6 8.8 12S9.8 6.4 12 3Z"/></svg>
+          <span>عالمي</span>
+        </a>
+        <a href="/favorites" class="nav-icon-btn" title="المفضلة">
+          <svg viewBox="0 0 24 24"><path d="M20.8 8.7c0 5.1-8.8 10.1-8.8 10.1S3.2 13.8 3.2 8.7A4.7 4.7 0 0 1 12 6.1a4.7 4.7 0 0 1 8.8 2.6Z"/></svg>
+          <span>المفضلة</span>
+        </a>
+        <a href="/cart" class="nav-icon-btn nav-icon-cart" title="السلة">
+          <svg viewBox="0 0 24 24"><path d="M3 4h2l2.4 11.2a1.5 1.5 0 0 0 1.5 1.2h8.3a1.5 1.5 0 0 0 1.5-1.2L20 8H7"/><circle cx="9" cy="20" r="1.4"/><circle cx="18" cy="20" r="1.4"/></svg>
+          <span>السلة</span>
+          <em v-if="store.cartCount > 0" class="nav-icon-badge">{{ store.cartCount }}</em>
+        </a>
+        <a v-if="store.currentUser" href="/profile" class="nav-icon-btn" title="حسابي">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="3.5"/><path d="M4.5 21c.8-4 3.2-6 7.5-6s6.7 2 7.5 6"/></svg>
+          <span>حسابي</span>
+        </a>
+        <a v-else href="/login" class="nav-icon-btn nav-icon-login" title="دخول">
+          <span>دخول</span>
+        </a>
+      </div>
 
       <nav
         id="storefront-menu"
@@ -66,8 +161,9 @@
         :class="{ open: menuOpen }"
       >
         <p class="menu-title mobile-only">روابط سريعة</p>
-        <a href="/shop" @click="closeMenu">تصفح المنتجات</a>
+        <a href="/" @click="closeMenu">تصفح المنتجات</a>
         <a href="/express" @click="closeMenu">طلباتي </a>
+        <a v-if="theme === 'express'" href="/express/errand" @click="closeMenu">مشوار وشحن</a>
         <a href="/browse" @click="closeMenu">تسوق شي إن والعالمي</a>
         <a href="/buy-from-anywhere" @click="closeMenu">لصق رابط منتج</a>
         <a href="/compare" @click="closeMenu">مقارنة</a>
@@ -83,7 +179,7 @@
           <span v-if="store.cartCount > 0" class="cart-badge">{{ store.cartCount }}</span>
         </a>
         <template v-if="store.currentUser">
-          <a href="/my-requests" @click="closeMenu">طلباتي</a>
+          <a href="/my-requests" @click="closeMenu">متابعة الطلبات</a>
           <a href="/favorites" @click="closeMenu">المفضلة</a>
           <a href="/profile" @click="closeMenu">حسابي</a>
           <span class="nav-user">{{ store.currentUser.name }}</span>
@@ -105,7 +201,7 @@ import { store, hydrateUser, refreshCartCount, logout } from '../../storefront/s
 const props = defineProps({
   theme: {
     type: String,
-    default: 'store',
+    default: 'home',
     validator: (v) => ['store', 'express', 'home'].includes(v),
   },
   hideSearch: {
@@ -116,23 +212,34 @@ const props = defineProps({
 
 const params = new URLSearchParams(window.location.search);
 const initialQuery = params.get('q') || '';
-const logoUrl = computed(() => props.theme === 'home'
+const isHomeLike = computed(() => props.theme === 'home' || props.theme === 'store');
+const logoUrl = computed(() => (isHomeLike.value || props.theme === 'express')
   ? '/brand/wasla-id-horizontal-white.png?v=6'
   : '/brand/wasla-id-horizontal.png?v=6');
 const menuOpen = ref(false);
+const loginHref = computed(() => {
+  const path = `${window.location.pathname}${window.location.search}`;
+  return `/login?redirect=${encodeURIComponent(path)}`;
+});
 
 function closeMenu() {
   menuOpen.value = false;
+}
+
+function onCartChanged() {
+  refreshCartCount();
 }
 
 onMounted(async () => {
   await hydrateUser();
   await refreshCartCount();
   window.addEventListener('resize', onResize);
+  window.addEventListener('wasla-cart-changed', onCartChanged);
 });
 
 onBeforeUnmount(() => {
   window.removeEventListener('resize', onResize);
+  window.removeEventListener('wasla-cart-changed', onCartChanged);
 });
 
 function onResize() {
@@ -182,6 +289,17 @@ async function onLogout() {
   display: block;
   object-fit: contain;
   background: transparent;
+}
+.express-channel-tag {
+  margin-inline-start: 0.35rem;
+  padding: 0.18rem 0.45rem;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.22);
+  color: #fff;
+  font-size: 0.62rem;
+  font-weight: 900;
+  line-height: 1.2;
+  white-space: nowrap;
 }
 .nav-search {
   flex: 1;
@@ -333,7 +451,73 @@ async function onLogout() {
   z-index: 40;
 }
 .mobile-only { display: none !important; }
+.desktop-only { display: none !important; }
 .desktop-inline { display: inline-flex !important; }
+.home-desktop-actions,
+.express-desktop-actions { display: none; align-items: center; gap: 0.35rem; flex-shrink: 0; }
+.nav-icon-btn.nav-icon-active {
+  background: rgba(255, 255, 255, 0.22);
+  color: #fff;
+}
+.nav-icon-login.express-login {
+  background: #fff;
+  color: #7a4518 !important;
+}
+.nav-icon-btn {
+  position: relative;
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.12rem;
+  min-width: 3.1rem;
+  padding: 0.35rem 0.45rem;
+  border-radius: 0.75rem;
+  text-decoration: none;
+  color: rgba(255, 255, 255, 0.92);
+  font-size: 0.62rem;
+  font-weight: 800;
+  line-height: 1.1;
+  transition: background 0.15s ease;
+}
+.nav-icon-btn:hover { background: rgba(255, 255, 255, 0.12); color: #fff; }
+.nav-icon-btn svg {
+  width: 1.35rem;
+  height: 1.35rem;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.nav-icon-btn svg path[fill] { fill: currentColor; stroke: none; }
+.nav-icon-cart svg { fill: none; }
+.nav-icon-login {
+  min-width: auto;
+  padding: 0.45rem 0.85rem;
+  border-radius: 999px;
+  background: #fff;
+  color: #087b8d !important;
+  font-size: 0.78rem;
+}
+.nav-icon-login:hover { filter: brightness(0.98); background: #fff; }
+.nav-icon-badge {
+  position: absolute;
+  top: 0.15rem;
+  inset-inline-start: 0.35rem;
+  min-width: 1rem;
+  height: 1rem;
+  padding: 0 0.2rem;
+  border-radius: 999px;
+  background: #e53935;
+  color: #fff;
+  font-style: normal;
+  font-size: 0.58rem;
+  font-weight: 900;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
 
 /* طلباتي  — ثيم بني */
 .storefront-nav.theme-express {
@@ -388,15 +572,35 @@ async function onLogout() {
 .locale-pill span { white-space: nowrap; }
 .locale-pill b { font-size: 0.9rem; line-height: 1; font-weight: 900; }
 .theme-home .nav-actions { order: 2; }
-.theme-home .cart-pill { color: #fff !important; }
-.theme-home .cart-ico { color: #fff; }
+.theme-home .cart-pill { color: #0f5a66 !important; }
+.theme-home .cart-ico { color: #1c7282; }
 .theme-home .nav-favorite { color: #fff !important; }
 .theme-home .nav-actions,
 .theme-home .nav-actions button,
 .theme-home .nav-actions a,
 .theme-home .locale-pill,
 .theme-home .brand { color: #fff; }
-.nav-favorite { text-decoration: none; line-height: 1; }
+.nav-favorite,
+.nav-account { text-decoration: none; line-height: 1; color: #fff; }
+.nav-account {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.35rem;
+}
+.nav-login-chip {
+  font-size: 0.72rem;
+  font-weight: 900;
+  padding: 0.38rem 0.55rem;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.18);
+  border: 1px solid rgba(255, 255, 255, 0.35);
+}
+.theme-express .nav-login-chip {
+  background: rgba(255, 255, 255, 0.92);
+  color: #5c3210;
+  border-color: #fff;
+}
 
 @media (max-width: 860px) {
   .nav-top {
@@ -463,23 +667,127 @@ async function onLogout() {
   }
   .theme-express .menu-title { color: #e8c9a0; }
   .theme-express .menu-backdrop { background: rgba(61, 40, 23, 0.4); }
+  .theme-express .cart-pill {
+    background: #fff;
+    color: #5c3210 !important;
+    border-color: #fff;
+    padding: 0.42rem 0.78rem 0.42rem 0.65rem;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.14);
+  }
+  .theme-express .cart-label { display: inline; font-size: 0.82rem; }
+  .theme-express .cart-ico { color: #8a4b12; }
+  .theme-express .cart-badge { border-color: #fff; }
   .theme-home .nav-top { gap: 0.35rem; padding: 0.42rem 0.6rem 0.5rem; }
   .theme-home .brand-logo { height: 35px; max-width: 125px; }
   .theme-home .nav-actions { margin-inline-start: auto; }
-  .theme-home .cart-pill { padding: 0; background: transparent; color: #fff !important; border: 0; box-shadow: none; font-size: 1.55rem; }
-  .theme-home .cart-label { display: none; }
-  .theme-home .cart-ico svg { width: 28px; height: 28px; }
-  .theme-home .cart-badge { top: -0.25rem; inset-inline-start: -0.25rem; }
+  .theme-home .cart-pill {
+    padding: 0.38rem 0.72rem 0.38rem 0.6rem;
+    background: #fff;
+    color: #0f5a66 !important;
+    border: 0;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.12);
+    font-size: 1rem;
+  }
+  .theme-home .cart-label { display: inline; font-size: 0.78rem; }
+  .theme-home .cart-ico {
+    display: inline-flex;
+    color: #1c7282;
+  }
+  .theme-home .cart-ico svg {
+    width: 1.15rem;
+    height: 1.15rem;
+    color: #1c7282;
+    stroke: #1c7282;
+  }
+  .theme-home .cart-ico svg circle[fill] {
+    fill: #1c7282;
+  }
+  .theme-home .cart-badge {
+    top: -0.35rem;
+    inset-inline-end: -0.2rem;
+    inset-inline-start: auto;
+  }
   .theme-home .menu-toggle { order: 0; margin-inline-end: auto; padding: 0.35rem; border: 0; background: transparent; }
   .theme-home .menu-label { display: none; }
   .theme-home .burger span { background: #fff; height: 2px; }
   .theme-home .nav-favorite svg,
-  .theme-home .cart-ico svg,
   .theme-home .menu-toggle,
   .theme-home .locale-pill { color: #fff; }
   .theme-home .locale-pill { order: 1; }
   .theme-home .locale-pill { padding: 0.48rem 0.62rem; font-size: 0.72rem; }
   .theme-home .locale-pill svg { width: 1rem; height: 1rem; }
   .theme-home .nav-search { margin-top: 0.15rem; }
+}
+
+@media (min-width: 861px) {
+  .desktop-only { display: inline-flex !important; }
+  .theme-home .nav-top {
+    max-width: 1200px;
+    margin: 0 auto;
+    flex-wrap: nowrap;
+    align-items: center;
+    padding: 0.55rem 1.25rem;
+    gap: 0.85rem;
+  }
+  .theme-home .brand { order: 1; flex-shrink: 0; }
+  .theme-home .brand-logo { height: 42px; max-width: 170px; }
+  .theme-home .nav-search {
+    order: 2;
+    flex: 1 1 auto;
+    flex-basis: auto;
+    max-width: min(520px, 42vw);
+    margin: 0;
+    background: rgba(255, 255, 255, 0.95);
+    border-color: rgba(255, 255, 255, 0.95);
+  }
+  .theme-home .nav-search input { color: #132f37; }
+  .theme-home .nav-search input::placeholder { color: #7a9197; }
+  .theme-home .nav-search button { color: #087b8d; }
+  .theme-home .home-desktop-actions {
+    order: 3;
+    display: inline-flex !important;
+    margin-inline-start: auto;
+  }
+  .theme-home .nav-actions { display: none !important; }
+  .theme-home .nav-links {
+    order: 4;
+    display: none !important;
+  }
+
+  .theme-express .nav-top {
+    max-width: 1200px;
+    margin: 0 auto;
+    flex-wrap: nowrap;
+    align-items: center;
+    padding: 0.55rem 1.25rem;
+    gap: 0.85rem;
+  }
+  .theme-express .brand { order: 1; flex-shrink: 0; }
+  .theme-express .brand-logo { height: 42px; max-width: 170px; }
+  .theme-express .express-nav-search {
+    order: 2;
+    flex: 1 1 auto;
+    flex-basis: auto;
+    max-width: min(480px, 40vw);
+    display: inline-flex !important;
+    background: rgba(255, 255, 255, 0.95);
+    border-color: rgba(255, 255, 255, 0.95);
+  }
+  .theme-express .express-nav-search input { color: #3d2817; }
+  .theme-express .express-nav-search input::placeholder { color: #9a7a5c; }
+  .theme-express .express-nav-search button { color: #7a4518; }
+  .theme-express .express-desktop-actions {
+    order: 3;
+    display: inline-flex !important;
+    margin-inline-start: auto;
+  }
+  .theme-express .nav-actions { display: none !important; }
+  .theme-express .nav-links { display: none !important; }
+  .theme-express .nav-search:not(.express-nav-search) {
+    order: 2;
+    flex: 1;
+    max-width: min(480px, 40vw);
+    background: rgba(255, 255, 255, 0.95);
+  }
 }
 </style>

@@ -1,6 +1,6 @@
 <template>
   <div class="product-card">
-    <a :href="`/products/${product.id}`" class="product-image-wrap">
+    <a :href="productHref" class="product-image-wrap">
       <img
         v-if="product.image"
         :src="product.image"
@@ -37,7 +37,7 @@
           @click.prevent="toggleCompareClick"
           title="مقارنة"
         >{{ compared ? 'بالمقارنة' : 'قارن' }}</button>
-        <a :href="`/products/${product.id}`" class="btn-view">عرض</a>
+        <a :href="productHref" class="btn-view">عرض</a>
       </div>
     </div>
   </div>
@@ -49,12 +49,14 @@ import { formatPrice, effectivePrice, hasDiscount, money } from '../../storefron
 import api from '../../storefront/api';
 import { store, hydrateUser } from '../../storefront/store';
 import { isInCompare, toggleCompare } from '../../storefront/compareTray';
+import { productUrl } from '../../storefront/productUrl';
 
 const props = defineProps({
   product: { type: Object, required: true },
   compareEnabled: { type: Boolean, default: false },
 });
 
+const productHref = computed(() => productUrl(props.product?.id));
 const imgFailed = ref(false);
 const wished = ref(!!props.product?.wished);
 const compared = ref(isInCompare(props.product?.id));

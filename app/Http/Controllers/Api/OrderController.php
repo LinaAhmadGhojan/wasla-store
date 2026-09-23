@@ -65,7 +65,8 @@ class OrderController extends Controller
             'can_reorder' => $order->items->contains(fn ($i) => (bool) $i->product_id),
             'invoice_url' => url('/orders/'.$order->id.'/invoice'),
             'estimated_delivery' => $this->delivery->estimatedDelivery($order),
-            'live_location' => null,
+            'live_location' => $this->delivery->liveLocationMap($order),
+            'progress_percent' => $this->delivery->customerProgressPercent($order),
             'delivery_otp' => in_array($order->status, ['shipped', 'out_for_delivery', 'assigned', 'picked_up'], true)
                 ? ($order->getAttributes()['delivery_otp'] ?? null)
                 : null,

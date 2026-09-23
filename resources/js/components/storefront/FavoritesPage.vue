@@ -173,7 +173,7 @@ async function addToCart(row) {
 }
 
 async function shareProduct(row) {
-  const url = row.product?.url || `${window.location.origin}/products/${row.product_id}`;
+  const url = row.product?.url || `${window.location.origin}/product/${row.product_id}`;
   const title = row.product?.name || 'منتج من وصلة';
   if (navigator.share) {
     try {

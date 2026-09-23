@@ -23,6 +23,7 @@ class DatabaseSeeder extends Seeder
             WhatsappBroadcastSeeder::class,
             SheinCatalogSeeder::class,
             ExpressSeeder::class,
+            CustomerTrackingDemoSeeder::class,
         ]);
     }
 }

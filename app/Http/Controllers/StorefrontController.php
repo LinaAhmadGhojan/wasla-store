@@ -19,6 +19,11 @@ class StorefrontController extends Controller
         return view('storefront.express');
     }
 
+    public function expressErrand()
+    {
+        return view('storefront.express-errand');
+    }
+
     public function expressStoreShow($store)
     {
         return view('storefront.express-store', ['storeId' => $store]);

@@ -17,7 +17,7 @@
         <div class="cards">
           <article v-for="p in products" :key="p.id" class="card">
             <button type="button" class="rm" @click="remove(p.id)">إزالة</button>
-            <a :href="`/products/${p.id}`">
+            <a :href="productUrl(p.id)">
               <img v-if="p.image" :src="p.image" :alt="p.name" />
               <div v-else class="ph">وصلة</div>
               <h2>{{ p.name }}</h2>
@@ -55,6 +55,7 @@ import api from '../../storefront/api';
 import StorefrontNav from './StorefrontNav.vue';
 import StorefrontFooter from './StorefrontFooter.vue';
 import { getCompareIds, removeCompare } from '../../storefront/compareTray';
+import { productUrl } from '../../storefront/productUrl';
 
 function writeCompareIdsFallback(ids) {
   localStorage.setItem('wasla_compare_ids', JSON.stringify(ids));

@@ -1,6 +1,6 @@
 <template>
   <div class="shop-page" dir="rtl">
-    <StorefrontNav theme="store" :hide-search="true" />
+    <StorefrontNav />
 
     <div class="catalog-shell">
       <div class="mode-switch" role="tablist" aria-label="اختر نوع التسوق">
@@ -92,7 +92,7 @@
                 v-for="p in suggestions.products"
                 :key="p.id"
                 class="suggest-row"
-                :href="`/products/${p.id}`"
+                :href="productUrl(p.id)"
               >{{ p.name }}</a>
             </div>
           </div>
@@ -373,6 +373,7 @@ import { rememberChannel } from '../../storefront/channel';
 import StorefrontNav from './StorefrontNav.vue';
 import StorefrontFooter from './StorefrontFooter.vue';
 import ProductCard from './ProductCard.vue';
+import { productUrl } from '../../storefront/productUrl';
 
 rememberChannel('store');
 import {

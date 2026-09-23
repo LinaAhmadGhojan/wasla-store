@@ -14,6 +14,7 @@ use App\Http\Controllers\Api\V1\CatalogController as V1CatalogController;
 use App\Http\Controllers\Api\V1\CouponController as V1CouponController;
 use App\Http\Controllers\Api\V1\CurrencyController as V1CurrencyController;
 use App\Http\Controllers\Api\V1\ExpressController as V1ExpressController;
+use App\Http\Controllers\Api\V1\ExpressErrandController as V1ExpressErrandController;
 use App\Http\Controllers\Api\V1\ExpressSocialController as V1ExpressSocialController;
 use App\Http\Controllers\Api\V1\ExternalCatalogController as V1ExternalCatalogController;
 use App\Http\Controllers\Api\V1\ExternalPlatformController as V1ExternalPlatformController;
@@ -127,6 +128,9 @@ Route::prefix('v1')->name('api.v1.')->group(function () {
     Route::get('/express/items/{item}/questions', [V1ExpressSocialController::class, 'questions'])->whereNumber('item');
     Route::get('/express/items/{item}/similar', [V1ExpressSocialController::class, 'similar'])->whereNumber('item');
     Route::get('/express/items/{item}/favorite-status', [V1ExpressSocialController::class, 'favoriteStatus'])->whereNumber('item');
+    Route::get('/express/errands/pricing-config', [V1ExpressErrandController::class, 'pricingConfig']);
+    Route::post('/express/errands/quote', [V1ExpressErrandController::class, 'quote']);
+    Route::post('/express/errands', [V1ExpressErrandController::class, 'store']);
     Route::get('/coupons/preview', [V1CouponController::class, 'preview']);
     Route::get('/shipping-methods', [V1CouponController::class, 'shippingMethods']);
     Route::get('/products/{product}/similar', [V1CatalogController::class, 'similar']);
@@ -177,6 +181,7 @@ Route::prefix('v1')->name('api.v1.')->group(function () {
         Route::post('/express/items/{item}/questions', [V1ExpressSocialController::class, 'storeQuestion'])->whereNumber('item');
         Route::post('/express/items/{item}/favorite', [V1ExpressSocialController::class, 'favorite'])->whereNumber('item');
         Route::delete('/express/items/{item}/favorite', [V1ExpressSocialController::class, 'unfavorite'])->whereNumber('item');
+        Route::get('/express/errands/mine', [V1ExpressErrandController::class, 'mine']);
 
         Route::post('/products/{product}/questions', [V1ProductQuestionController::class, 'store']);
 

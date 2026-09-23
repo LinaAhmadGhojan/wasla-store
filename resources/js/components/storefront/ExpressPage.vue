@@ -3,11 +3,17 @@
     <StorefrontNav theme="express" :hide-search="true" />
 
     <div class="shell">
-      <div class="mode-switch" role="tablist" aria-label="اختر نوع التسوق">
-        <a href="/shop" class="mode-btn" role="tab" @click="rememberChannel('store')">متجر وصلة</a>
-        <a href="/express" class="mode-btn on" role="tab" aria-current="page" @click="rememberChannel('express')">طلباتي </a>
-      </div>
+      <HomeChannelCards active="express" store-href="/" />
       <p class="hint">توصيل من مطاعم ومتاجر قريبة · قريباً في دمشق</p>
+
+      <a href="/express/errand" class="errand-promo">
+        <span class="errand-promo-ico" aria-hidden="true">🛍️</span>
+        <span class="errand-promo-text">
+          <strong>مشوار وشحن — محلي وبين المحافظات</strong>
+          <em>بقالة · استلام طرد · إرسال لمحافظة ثانية</em>
+        </span>
+        <span class="errand-promo-go">←</span>
+      </a>
 
       <p v-if="loading" class="load-msg">عم نحمّل المتاجر والأطباق…</p>
       <p v-else-if="loadError" class="load-err">{{ loadError }}</p>
@@ -267,7 +273,6 @@
       </div>
     </div>
 
-    <StorefrontFooter theme="express" />
   </div>
 </template>
 
@@ -276,8 +281,7 @@ import { computed, onMounted, onBeforeUnmount, reactive, ref, watch } from 'vue'
 import api from '../../storefront/api';
 import { rememberChannel } from '../../storefront/channel';
 import StorefrontNav from './StorefrontNav.vue';
-import StorefrontFooter from './StorefrontFooter.vue';
-
+import HomeChannelCards from './HomeChannelCards.vue';
 rememberChannel('express');
 
 const filtersOpen = ref(false);
@@ -505,33 +509,50 @@ onBeforeUnmount(() => {
 .shell {
   max-width: 1180px;
   margin: 0 auto;
-  padding: 1rem 1rem 3.5rem;
+  padding: 1rem 1rem 5.25rem;
 }
-.mode-switch {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 0.4rem;
-  margin-bottom: 0.35rem;
+@media (min-width: 861px) {
+  .express-page .shell { padding-bottom: 2rem; }
 }
-.mode-btn {
+.errand-promo {
   display: flex;
   align-items: center;
-  justify-content: center;
-  min-height: 2.55rem;
-  padding: 0.45rem 0.75rem;
-  border-radius: 999px;
-  border: 1.5px solid rgba(138, 75, 18, 0.25);
-  background: #fff;
-  color: #5c3210;
-  font-weight: 900;
-  font-size: 0.9rem;
+  gap: 0.65rem;
+  margin: 0 0 0.85rem;
+  padding: 0.65rem 0.75rem;
+  border-radius: 1rem;
+  background: linear-gradient(135deg, #fff 0%, #fff6eb 100%);
+  border: 1.5px solid rgba(138, 75, 18, 0.18);
+  box-shadow: 0 6px 18px rgba(92, 50, 16, 0.07);
   text-decoration: none;
+  color: inherit;
 }
-.mode-btn.on {
-  background: #8a4b12;
-  border-color: #8a4b12;
-  color: #fff8ef;
-  box-shadow: 0 6px 16px rgba(138, 75, 18, 0.22);
+.errand-promo-ico {
+  font-size: 1.45rem;
+  line-height: 1;
+}
+.errand-promo-text {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.12rem;
+}
+.errand-promo-text strong {
+  font-size: 0.88rem;
+  font-weight: 900;
+  color: #5c3210;
+}
+.errand-promo-text em {
+  font-style: normal;
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: #9a7a5c;
+}
+.errand-promo-go {
+  font-weight: 900;
+  color: #8a4b12;
+  font-size: 1.1rem;
 }
 .hint {
   margin: 0 0 0.85rem;
