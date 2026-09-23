@@ -380,8 +380,8 @@ async function onLogout() {
   text-decoration: none;
 }
 .nav-cart-icon svg {
-  width: 1.15rem;
-  height: 1.15rem;
+  width: 1.25rem;
+  height: 1.25rem;
 }
 .nav-cart-badge {
   position: absolute;
@@ -747,15 +747,19 @@ async function onLogout() {
   }
   .nav-mobile-tools .nav-account,
   .nav-mobile-tools .nav-cart-icon {
-    min-width: 2rem;
-    min-height: 2rem;
-    padding: 0.2rem;
+    min-width: 2.35rem;
+    min-height: 2.35rem;
+    padding: 0.28rem;
     background: transparent;
     border: 0;
   }
   .nav-mobile-tools .nav-account svg {
-    width: 1.1rem;
-    height: 1.1rem;
+    width: 1.28rem;
+    height: 1.28rem;
+  }
+  .nav-mobile-tools .nav-cart-icon svg {
+    width: 1.32rem;
+    height: 1.32rem;
   }
   .brand-logo { height: 42px; max-width: 158px; }
   .mobile-only { display: inline-flex !important; }
