@@ -1,6 +1,6 @@
 <template>
   <div class="express-page" dir="rtl">
-    <StorefrontNav theme="express" :hide-search="true" />
+    <StorefrontNav theme="express" />
 
     <div class="shell">
       <HomeChannelCards active="express" store-href="/" />
