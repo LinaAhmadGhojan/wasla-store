@@ -34,6 +34,14 @@
           >
             <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="3.5"/><path d="M4.5 21c.8-4 3.2-6 7.5-6s6.7 2 7.5 6"/></svg>
           </a>
+          <a href="/cart" class="nav-cart-icon" aria-label="سلة التسوق" title="السلة">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <circle cx="9" cy="20" r="1.4" fill="currentColor" stroke="none"/>
+              <circle cx="18" cy="20" r="1.4" fill="currentColor" stroke="none"/>
+              <path d="M3 4h2l2.4 11.2a1.5 1.5 0 0 0 1.5 1.2h8.3a1.5 1.5 0 0 0 1.5-1.2L20 8H7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            <span v-if="store.cartCount > 0" class="nav-cart-badge">{{ store.cartCount }}</span>
+          </a>
           <button
             type="button"
             class="menu-toggle"
@@ -359,6 +367,43 @@ async function onLogout() {
   height: 2.5px;
   border-radius: 99px;
   background: currentColor;
+}
+.nav-cart-icon {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 2rem;
+  min-height: 2rem;
+  padding: 0.2rem;
+  color: inherit;
+  text-decoration: none;
+}
+.nav-cart-icon svg {
+  width: 1.15rem;
+  height: 1.15rem;
+}
+.nav-cart-badge {
+  position: absolute;
+  top: 0.05rem;
+  inset-inline-start: 0.1rem;
+  min-width: 0.95rem;
+  height: 0.95rem;
+  padding: 0 0.18rem;
+  border-radius: 999px;
+  background: #e53935;
+  color: #fff;
+  font-size: 0.58rem;
+  font-weight: 900;
+  line-height: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1.5px solid currentColor;
+  border-color: rgba(255, 255, 255, 0.85);
+}
+.theme-express .nav-cart-badge {
+  border-color: #8a4b12;
 }
 .nav-search {
   flex: 1;
@@ -693,16 +738,15 @@ async function onLogout() {
   }
   .nav-mobile-tools {
     display: inline-flex !important;
-    order: 1;
+    margin-inline-start: auto;
   }
   .nav-bar-row .brand {
-    order: 2;
     flex: 0 1 auto;
     min-width: 0;
     justify-content: flex-start;
-    margin-inline-start: auto;
   }
-  .nav-mobile-tools .nav-account {
+  .nav-mobile-tools .nav-account,
+  .nav-mobile-tools .nav-cart-icon {
     min-width: 2rem;
     min-height: 2rem;
     padding: 0.2rem;
