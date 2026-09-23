@@ -14,16 +14,7 @@
     </div>
 
     <div class="mobile-strip mobile-only">
-      <div class="mobile-strip-scroll" role="tablist" aria-label="فلترة سريعة">
-        <button
-          v-for="option in mobileQuickTabs"
-          :key="option.key"
-          type="button"
-          class="mobile-section-tab"
-          :class="{ active: mobileQuickTab === option.key }"
-          @click="setMobileQuick(option.key)"
-        >{{ option.label }}</button>
-      </div>
+      <p class="mobile-strip-hint">كل المنتجات — استخدمي «فلاتر» لتضييق النتائج</p>
       <button
         type="button"
         class="mobile-filter-cta"
@@ -61,8 +52,21 @@
         </div>
         <div class="filters-body">
           <div class="filter-group mobile-only">
+            <h3>عرض سريع</h3>
+            <button
+              v-for="option in mobileQuickTabs"
+              :key="option.key"
+              type="button"
+              class="opt"
+              :class="{ on: mobileQuickTab === option.key }"
+              @click="setMobileQuick(option.key)"
+            >{{ option.label }}</button>
+          </div>
+
+          <div class="filter-group mobile-only">
             <h3>ترتيب النتائج</h3>
-            <select v-model="filters.sort" class="sort-select" @change="reload">
+            <select v-model="filters.sort" class="sort-select" @change="onSortChange">
+              <option value="">كل المنتجات</option>
               <option v-for="(label, key) in (facets.sorts || defaultSorts)" :key="key" :value="key">{{ label }}</option>
             </select>
           </div>
@@ -151,7 +155,7 @@
       <div class="results">
         <div class="results-toolbar desktop-only">
           <p class="meta">{{ meta.total ?? 0 }} منتج</p>
-          <select v-model="filters.sort" @change="reload">
+          <select v-model="filters.sort" @change="onSortChange">
             <option v-for="(label, key) in (facets.sorts || defaultSorts)" :key="key" :value="key">{{ label }}</option>
           </select>
         </div>
@@ -221,7 +225,7 @@ const page = ref(Number(urlParams.get('page') || 1));
 const filters = reactive({
   q: urlParams.get('q') || '',
   section: urlParams.get('section') || 'all',
-  sort: urlParams.get('sort') || 'newest',
+  sort: urlParams.get('sort') || '',
   category_id: urlParams.get('category_id') || '',
   subcategory_id: urlParams.get('subcategory_id') || '',
   brand_id: urlParams.get('brand_id') || '',
@@ -240,6 +244,9 @@ const filters = reactive({
 
 const activeFilterCount = computed(() => {
   let n = 0;
+  if (mobileQuickTab.value === 'favorites') n += 1;
+  if (filters.section && filters.section !== 'all') n += 1;
+  if (filters.sort) n += 1;
   if (filters.category_id) n += 1;
   if (filters.subcategory_id) n += 1;
   if (filters.brand_id) n += 1;
@@ -268,11 +275,48 @@ function showFilter(key) {
   return available.includes(key);
 }
 
+function hasUrlCatalogFilters() {
+  const p = new URLSearchParams(window.location.search);
+  if (p.get('q')) return true;
+  const sec = p.get('section');
+  if (sec && sec !== 'all') return true;
+  if (p.get('category_id') || p.get('subcategory_id') || p.get('brand_id')) return true;
+  if (p.get('store_id') || p.get('vendor_id') || p.get('collection_id')) return true;
+  if (p.get('min_price') || p.get('max_price') || p.get('color') || p.get('size')) return true;
+  if (p.get('rating') || p.get('gender')) return true;
+  if (p.get('discount') === '1' || p.get('on_sale') === '1') return true;
+  if (p.get('in_stock') === '1' || p.get('fast_delivery') === '1') return true;
+  return false;
+}
+
+function applyPristineBrowse() {
+  mobileQuickTab.value = 'all';
+  filters.q = '';
+  filters.section = 'all';
+  filters.sort = '';
+  filters.category_id = '';
+  filters.subcategory_id = '';
+  filters.brand_id = '';
+  filters.store_id = '';
+  filters.collection_id = '';
+  filters.min_price = null;
+  filters.max_price = null;
+  filters.color = '';
+  filters.size = '';
+  filters.rating = '';
+  filters.gender = '';
+  filters.discount = false;
+  filters.in_stock = false;
+  filters.fast_delivery = false;
+  page.value = 1;
+}
+
 function queryParams() {
-  const p = { page: page.value, per_page: 16 };
+  const p = { page: page.value, per_page: 24 };
   Object.entries(filters).forEach(([k, v]) => {
     if (v === '' || v === null || v === false) return;
     if (k === 'section' && v === 'all') return;
+    if (k === 'sort' && !v) return;
     if (k === 'discount') { p.discount = 1; return; }
     if (k === 'in_stock') { p.in_stock = 1; return; }
     if (k === 'fast_delivery') { p.fast_delivery = 1; return; }
@@ -315,11 +359,17 @@ function syncUrl() {
   window.history.replaceState({}, '', `${window.location.pathname}${qs ? `?${qs}` : ''}`);
 }
 
-async function reload() {
+async function reload(options = { syncUrl: true }) {
   if (mobileQuickTab.value !== 'favorites') {
-    syncUrl();
+    if (options.syncUrl) syncUrl();
     await Promise.all([loadFacets(), loadProducts()]);
   }
+}
+
+function onSortChange() {
+  mobileQuickTab.value = 'all';
+  page.value = 1;
+  reload();
 }
 
 function setFilter(key, value) {
@@ -359,10 +409,11 @@ function setMobileQuick(key) {
     filters.section = tab.section === 'favorites' ? 'all' : tab.section;
     if (tab.section === 'bestsellers') filters.sort = 'bestsellers';
     if (tab.section === 'new') filters.sort = 'newest';
-    if (tab.section === 'all') filters.sort = 'newest';
+    if (tab.section === 'all') filters.sort = '';
     page.value = 1;
     reload();
   }
+  closeFilters();
 }
 
 function goPage(n) {
@@ -374,7 +425,7 @@ function goPage(n) {
 function resetFilters() {
   Object.keys(filters).forEach((k) => {
     if (typeof filters[k] === 'boolean') filters[k] = false;
-    else if (k === 'sort') filters[k] = 'newest';
+    else if (k === 'sort') filters[k] = '';
     else if (k === 'section') filters[k] = 'all';
     else filters[k] = k.includes('price') ? null : '';
   });
@@ -400,7 +451,10 @@ watch(filtersOpen, (open) => {
 });
 
 onMounted(async () => {
-  await Promise.all([reload(), loadFavorites()]);
+  if (!hasUrlCatalogFilters()) {
+    applyPristineBrowse();
+  }
+  await reload({ syncUrl: false });
   window.addEventListener('keydown', onFiltersKeydown);
 });
 
@@ -448,9 +502,19 @@ onBeforeUnmount(() => {
 .mobile-strip {
   display: flex;
   align-items: center;
-  gap: 0.4rem;
+  justify-content: space-between;
+  gap: 0.5rem;
   margin-bottom: 0.65rem;
   min-height: 2.35rem;
+}
+.mobile-strip-hint {
+  margin: 0;
+  flex: 1;
+  min-width: 0;
+  font-size: 0.72rem;
+  font-weight: 800;
+  color: #5a7278;
+  line-height: 1.35;
 }
 .mobile-strip-scroll {
   display: flex;
