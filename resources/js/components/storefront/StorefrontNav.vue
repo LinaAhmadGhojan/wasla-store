@@ -25,8 +25,22 @@
 
         <a href="/" class="brand" aria-label="وصلة — تسوق شي إن في سوريا">
           <img :src="logoUrl" alt="وصلة WASLA — توصيل شي إن لسوريا" class="brand-logo" />
+          <span v-if="theme === 'home' || theme === 'store'" class="store-channel-tag">تسوق</span>
           <span v-if="theme === 'express'" class="express-channel-tag">طلباتي</span>
         </a>
+
+        <a
+          v-if="theme === 'home' || theme === 'store'"
+          href="/express"
+          class="nav-channel-jump nav-channel-express mobile-only"
+          title="طلباتي · أكل وتوصيل"
+        >طلباتي</a>
+        <a
+          v-if="theme === 'express'"
+          href="/"
+          class="nav-channel-jump nav-channel-store mobile-only"
+          title="تسوق وصلة · ملابس ومنتجات"
+        >تسوق</a>
 
         <div class="nav-actions">
           <a v-if="theme === 'home' || theme === 'store'" href="/favorites" class="nav-favorite mobile-only nav-header-extra" aria-label="المفضلة">
@@ -300,6 +314,7 @@ async function onLogout() {
   object-fit: contain;
   background: transparent;
 }
+.store-channel-tag,
 .express-channel-tag {
   margin-inline-start: 0.35rem;
   padding: 0.18rem 0.45rem;
@@ -310,6 +325,28 @@ async function onLogout() {
   font-weight: 900;
   line-height: 1.2;
   white-space: nowrap;
+}
+.nav-channel-jump {
+  flex-shrink: 0;
+  text-decoration: none;
+  font-size: 0.72rem;
+  font-weight: 900;
+  padding: 0.38rem 0.62rem;
+  border-radius: 999px;
+  line-height: 1.1;
+  white-space: nowrap;
+  border: 1.5px solid transparent;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.12);
+}
+.nav-channel-express {
+  background: #c4681a;
+  color: #fff;
+  border-color: rgba(255, 255, 255, 0.35);
+}
+.nav-channel-store {
+  background: #087b8d;
+  color: #fff;
+  border-color: rgba(255, 255, 255, 0.35);
 }
 .nav-search {
   flex: 1;
@@ -642,11 +679,11 @@ async function onLogout() {
     min-height: 2.75rem;
   }
   .nav-bar-row .brand {
-    flex: 1;
+    flex: 1 1 auto;
     min-width: 0;
     justify-content: flex-start;
   }
-  .brand-logo { height: 32px; max-width: 118px; }
+  .brand-logo { height: 38px; max-width: 142px; }
   .nav-actions {
     display: flex !important;
     align-items: center;
@@ -654,8 +691,13 @@ async function onLogout() {
     margin-inline-start: 0;
     flex-shrink: 0;
   }
-  .nav-header-extra { display: none !important; }
   .mobile-only { display: inline-flex !important; }
+  .mobile-only.nav-header-extra,
+  a.locale-pill.nav-header-extra,
+  a.cart-pill.nav-header-extra,
+  a.nav-favorite.nav-header-extra {
+    display: none !important;
+  }
   .desktop-inline { display: none !important; }
   .nav-search {
     order: unset;
@@ -731,12 +773,17 @@ async function onLogout() {
   }
   .theme-home .brand-logo,
   .theme-express .brand-logo {
-    height: 30px;
-    max-width: 112px;
+    height: 40px;
+    max-width: 150px;
   }
+  .theme-home .store-channel-tag,
   .theme-express .express-channel-tag {
-    font-size: 0.58rem;
-    padding: 0.12rem 0.38rem;
+    font-size: 0.65rem;
+    padding: 0.14rem 0.42rem;
+  }
+  .nav-channel-jump {
+    padding: 0.4rem 0.68rem;
+    font-size: 0.74rem;
   }
   .theme-home .menu-toggle,
   .theme-express .menu-toggle {
