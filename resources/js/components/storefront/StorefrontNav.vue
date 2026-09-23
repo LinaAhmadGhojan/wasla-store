@@ -691,13 +691,15 @@ async function onLogout() {
     gap: 0.5rem;
     min-height: 2.85rem;
   }
+  .nav-mobile-tools {
+    display: inline-flex !important;
+    order: 1;
+  }
   .nav-bar-row .brand {
+    order: 2;
     flex: 0 1 auto;
     min-width: 0;
     justify-content: flex-start;
-  }
-  .nav-mobile-tools {
-    display: inline-flex !important;
     margin-inline-start: auto;
   }
   .nav-mobile-tools .nav-account {
